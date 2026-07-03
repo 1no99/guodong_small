@@ -1,0 +1,14 @@
+<view style="text-align: center; color: #b9b9b9" wx:if="{{pageLoading}}">
+  <t-loading theme="circular" size="40rpx" text="加载中..." inherit-color />
+</view>
+<view class="home-page-header">
+  <view class="banner-list">
+    <image
+      wx:for="{{imgSrcs}}"
+      wx:key="index"
+      src="{{item.img}}"
+      class="banner-image"
+      mode="widthFix"
+    />
+  </view>
+</view>

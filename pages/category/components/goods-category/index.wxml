@@ -1,0 +1,23 @@
+<view class="goods-category custom-class">
+  <view class="goods-category__right">
+    <view wx:if="{{!isSlotRight}}" class="goods-category-normal">
+      <view
+        class="goods-category-normal-item"
+      >
+        <view class="goods-category-normal-item-second-container" >
+          <block wx:for="{{category}}" wx:key="index">
+            <view
+              class="goods-category-normal-item-second-container-item"
+              wx:for-key="index"
+              bindtap="changCategory"
+              data-item="{{item}}"
+            >
+              <image src="{{item.icon}}" style="width: 180rpx;height: 180rpx;border-radius: 20rpx;" />
+              <view class="flex goods-category-normal-item-container-item-title" style="margin: 10px 0;"> {{item.name}} </view>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

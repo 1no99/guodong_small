@@ -1,0 +1,66 @@
+<view class="order-confirm-page">
+  <!-- 收货地址 -->
+  <view class="section-title" wx:if="{{order.order_status == 2 || order.order_status == 3}}" style="background-color: #fff;padding: 20rpx 30rpx;">物流信息</view>
+  <view class="address-section" wx:if="{{order.order_status == 2 || order.order_status == 3}}" >
+    <view class="address-info" wx:if="{{order.express_no}}">
+      <view class="address-user">
+        <text class="name">{{order.express_company}}</text>
+        <!-- <text class="phone">{{order.express_time}}</text> -->
+      </view>
+      <view class="address-detail">快递单号：{{order.express_no}}</view>
+    </view>
+    <view class="address-info" style="color: #b6b0b0;" wx:else="">
+       暂无快递信息，等待客服添加
+    </view>
+  </view>
+  <view class="section-title" style="background-color: #fff;padding: 20rpx 30rpx;">地址信息</view>
+  <view class="address-section" >
+    <view class="address-info">
+      <view class="address-user">
+        <text class="name">{{order.receiver_name}}</text>
+        <text class="phone">{{order.receiver_phone}}</text>
+      </view>
+      <view class="address-detail">{{order.receiver_address}}</view>
+      <!-- <t-icon name="chevron-right" size="36rpx" class="arrow-icon" /> -->
+    </view>
+  </view>
+  <!-- 商品信息列表 -->
+  <view class="goods-section">
+    <view class="section-title">商品信息</view>
+
+    <!-- 多个商品列表 -->
+    <block wx:for="{{order.items}}" wx:key="id" >
+      <view class="goods-card">
+        <image class="goods-image" src="{{item.product_image}}" mode="aspectFill" />
+        <view class="goods-info">
+          <view class="goods-title">{{item.product_name}}</view>
+          <view class="goods-spec" wx:if="{{item.sku_name}}">规格：{{item.sku_name}}</view>
+          <view class="goods-price-row">
+            <view class="goods-price">¥{{item.price}}</view>
+            <view class="goods-price" style="color: #b6b0b0;font-size: 30rpx;">x{{item.quantity}}件</view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 订单备注 -->
+  <view class="remark-section">
+    <view class="remark-label">订单备注</view>
+    <view>{{order.remark?order.remark:'无'}}</view>
+  </view>
+  <!-- 价格信息 -->
+  <view class="price-section">
+    <view class="price-row">
+      <text class="price-label">运费</text>
+      <text class="price-value">免运费</text>
+    </view>
+    <view class="price-row total">
+      <text class="price-label">合计</text>
+      <text class="total-price">¥{{order.total_amount}}</text>
+    </view>
+  </view>
+<view wx:if="{{ order.order_status == 0 }}" bind:tap="updateStatus" style="width: 80%;margin: 0 auto; margin-top: 20rpx;text-align: center;border: 1px solid #ccc;height: 60rpx;line-height: 60rpx;border-radius: 15rpx;box-shadow:3rpx 2rpx 3rpx #b6b0b0;font-size: 30rpx;">取消订单</view>
+ 
+</view>
+<t-toast id="t-toast" />

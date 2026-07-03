@@ -1,0 +1,14 @@
+<view class="coupon-card {{type}} {{status}}">
+  <view class="coupon-left">
+    <view class="coupon-value">{{value}}</view>
+    <view class="coupon-desc">{{desc}}</view>
+  </view>
+  <view class="coupon-right">
+    <view class="coupon-title">{{title}}</view>
+    <view class="coupon-time">{{timeLimit}}</view>
+    <view class="coupon-tag" wx:if="{{tag}}">{{tag}}</view>
+  </view>
+  <view class="coupon-operator">
+    <slot name="operator"></slot>
+  </view>
+</view>

@@ -1,0 +1,102 @@
+
+<view class="page-container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="custom-nav__content" style="height: {{navigationBarHeight}}px;">
+      <view class="custom-nav__back" bindtap="goBack">
+        <text class="custom-nav__back-arrow">‹</text>
+      </view>
+      <view class="custom-nav__title">我的订单</view>
+    </view>
+  </view>
+  <view class="tab-bar" style="top: {{navHeight}}px;">
+    <view class="tab-bar__placeholder" />
+    <t-tabs
+      t-class="tab-bar__inner"
+      t-class-active="tab-bar__active"
+      t-class-track="t-tabs-track"
+      bind:change="onTabChange"
+      value="{{status}}"
+      style="position: fixed; top: {{navHeight}}px; left: 0; z-index: 100"
+    >
+      <t-tab-panel
+      
+        wx:for="{{tabs}}"
+        wx:for-index="index"
+        wx:for-item="item"
+        wx:key="index"
+        label="{{item.text}}"
+        value="{{item.key}}"
+      />
+    </t-tabs>
+  </view>
+  <t-pull-down-refresh
+  style="margin-top: {{navHeight}}px;"
+    id="pull-down-refresh"
+    normal-bar-height="{{200}}"
+    max-bar-height="{{272}}"
+    refreshTimeout="{{3000}}"
+    background="#f5f5f5"
+    use-loading-slot
+    loading-size="60rpx"
+    value="{{pullDownRefreshing}}"
+    bindrefresh="onPullDownRefresh_"
+    t-class-indicator="t-class-indicator"
+  >
+    <view
+      wx:for="{{orderList}}"
+      wx:key="id"
+      wx:for-item="order"
+      wx:for-index="oIndex"
+      order="{{order}}"
+      defaultShowNum="{{3}}"
+     
+      class="order-card wr-class"
+      useLogoSlot
+    >
+      <view slot="top-left"  bind:tap="onOrderCardTap" data-order="{{order}}" class="order-number" style="display: flex;justify-content: space-between;margin-bottom: 20rpx;">
+        <view>订单号：{{order.orderNo}}</view>
+        <view wx:if="{{order.orderStatusName == '已取消'}}" style="color: rgb(207, 203, 200);">{{order.orderStatusName}}</view>
+        <view wx:else style="color: chocolate;">{{order.orderStatusName}}</view>
+      </view>
+      <view style="display: flex;">
+        <view style="display: flex;width: 70%;"  bind:tap="onOrderCardTap" data-order="{{order}}">
+          <view wx:for="{{order.orderItemVOs}}" wx:key="index" wx:for-item="itemData" style="display: flex;">
+            <image style="width: 130rpx;height: 130rpx;border-radius: 10rpx;margin-right: 10rpx;"   src="{{itemData.goodsPictureUrl}}" mode=""/>
+            <view style="font-size: 30rpx;" wx:if="{{order.orderItemVOs.length < 2}}">
+              {{itemData.goodsName}}
+              <view style="margin-top: 20rpx;"><span style="background-color: rgb(245, 245, 238);font-size: 24rpx;padding: 10rpx;width:100rpx;text-align: center;border-radius: 10rpx;"> {{itemData.sku_name}}</span></view>
+            </view>
+            
+
+          </view>
+        </view>
+        <view slot="more" style="justify-content: start;width: 30%;">
+          <view class="price-total" style="text-align: right;" >
+          
+            <price fill class="real-pay" price="{{order.totalAmount + ''}}" decimalSmaller />
+          </view>
+          <view style="text-align: right;font-size: 24rpx;color: #8b8282;margin-top: 16rpx;"> 共{{order.total_items}}件</view>
+      
+          <!-- 订单按钮栏 -->
+          <view wx:if="{{order.orderStatus == 0}}" bind:tap="updateStatus" data-id="{{order.orderId}}" style="height: 45rpx;width: 130rpx;border: 1px solid #ccc;text-align: center;border-radius: 10rpx;font-size: 24rpx;line-height: 40rpx;float: right;margin-top: 10rpx;">取消订单</view>
+        </view>
+      </view>
+    </view>
+    <!-- 列表加载中/已全部加载 -->
+    <view wx:if="{{!pullDownRefreshing && orderList.length > 0}}" class="load-more-container">
+      <view wx:if="{{listLoading === 'loading'}}" class="load-more-text">加载中...</view>
+      <view wx:elif="{{listLoading === 'no-more'}}" class="load-more-text">没有更多了</view>
+    </view>
+    <!-- 空态 -->
+    <view wx:if="{{ hasLoaded && orderList.length == 0 && !loading }}" class="empty-wrapper">
+      <t-empty t-class="t-empty-text" description="暂无相关订单" />
+    </view>
+    <!-- 加载中 -->
+    <view wx:if="{{ loading && orderList.length == 0 && !pullDownRefreshing }}" class="empty-wrapper" style="display: flex; align-items: center; justify-content: center;">
+      <t-loading theme="circular" size="80rpx" text="加载中..." />
+    </view>
+  </t-pull-down-refresh>
+</view>
+<t-toast id="t-toast" />
+<t-dialog id="t-dialog" />

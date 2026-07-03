@@ -1,0 +1,102 @@
+<view class="order-confirm-page">
+  <!-- 收货地址 -->
+  <view class="address-section" bindtap="chooseAddress">
+    <view wx:if="{{addressInfo}}" class="address-info">
+      <view class="address-user">
+        <text class="name">{{addressInfo.userName}}</text>
+        <text class="phone">{{addressInfo.phoneNumber}}</text>
+      </view>
+      <view class="address-detail">{{addressInfo.address}}</view>
+      <t-icon name="chevron-right" size="36rpx" class="arrow-icon" />
+    </view>
+    <view wx:else class="no-address">
+      <view class="no-address-text">请选择收货地址</view>
+      <t-icon name="chevron-right" size="36rpx" class="arrow-icon" />
+    </view>
+  </view>
+
+  <!-- 商品信息列表 -->
+  <view class="goods-section">
+    <view class="section-title">商品信息</view>
+
+    <!-- 多个商品列表 -->
+    <block wx:for="{{goodsList}}" wx:key="id">
+      <view class="goods-card">
+        <image class="goods-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="goods-info">
+          <view class="goods-title">{{item.title}}</view>
+          <view class="goods-spec" wx:if="{{item.spec}}">颜色/规格：{{item.spec}}</view>
+          <view class="goods-price-row">
+            <view class="goods-price">¥{{item.price}}</view>
+            <view class="goods-quantity">
+              <t-stepper
+                value="{{item.quantity}}"
+                min="1"
+                max="{{9999}}"
+                theme="filled"
+                size="small"
+                data-index="{{index}}"
+                bind:change="onQuantityChange"
+              />
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 订单备注 -->
+  <view class="remark-section">
+    <view class="remark-label">订单备注</view>
+    <input
+      class="remark-input"
+      placeholder="选填，可以告诉卖家您的特殊需求"
+      value="{{remark}}"
+      bindinput="onRemarkInput"
+    />
+  </view>
+
+  <!-- 价格信息 -->
+  <view class="price-section">
+    <view class="price-row">
+      <text class="price-label">商品金额</text>
+      <text class="price-value">¥{{goodsAmountStr}}</text>
+    </view>
+    <view class="price-row">
+      <text class="price-label">运费</text>
+      <text class="price-value">免运费</text>
+    </view>
+    <view class="price-row total">
+      <text class="price-label">合计</text>
+      <text class="total-price">¥{{totalPriceStr}}</text>
+    </view>
+  </view>
+
+  <!-- 底部提交栏 -->
+  <view class="submit-bar">
+    <view class="total-info">
+      <text class="total-text">合计：</text>
+      <text class="submit-total-price">¥{{totalPriceStr}}</text>
+      <text class="goods-count-text">共{{goodsCount}}件</text>
+    </view>
+    <view class="submit-btn" bindtap="submitOrder">提交订单</view>
+  </view>
+
+  <!-- 订单提交成功弹窗 -->
+  <view class="order-success-modal" wx:if="{{showSuccessModal}}">
+    <view class="modal-mask" bindtap="closeSuccessModal"></view>
+    <view class="modal-content">
+      <view class="modal-icon">
+        <t-icon name="check-circle-filled" size="120rpx" color="#07c160" />
+      </view>
+      <view class="modal-title">订单提交成功</view>
+      <view class="modal-desc" style="margin-bottom: 0px;">商品订单信息已提交成功！</view>
+      <view class="modal-desc" style="color: red;">点击复制信息按钮把订单信息发送给客服。</view>
+      <view class="modal-desc" style="color: red;">在客服处付款后可立即发货，未付款不发货</view>
+      <view class="modal-btns">
+        <view class="modal-btn modal-btn-cancel" bindtap="goOrderList">查看订单</view>
+        <button class="modal-btn modal-btn-confirm" bindtap="onShareOrder">复制订单信息</button>
+      </view>
+    </view>
+  </view>
+</view>

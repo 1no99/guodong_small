@@ -1,0 +1,60 @@
+<view class="goods-list-container">
+  <view class="header-with-back">
+    <t-search
+      t-class="t-search"
+      t-class-input-container="t-class__input-container"
+      t-class-left="t-search__left-icon"
+      t-class-input="t-search__input"
+      value="{{keywords}}"
+      style="padding-bottom: 10px;"
+      leftIcon=""
+      placeholder="搜索商品"
+      bind:submit="handleSubmit"
+    >
+      <t-icon slot="left-icon" prefix="wr" name="search" size="40rpx" color="#bbb" />
+    </t-search>
+  </view>
+
+  <view class="sort-bar" wx:if="{{sorts.length > 0}}">
+    <view
+      wx:for="{{sorts}}"
+      wx:key="id"
+      class="sort-item {{overall === item.id ? 'sort-active' : ''}}"
+      bindtap="handleSortChange"
+      data-id="{{item.id}}"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="empty-wrap" wx:if="{{goodsList.length === 0 && hasLoaded}}">
+    <t-empty t-class="empty-tips" size="240rpx" description="暂无相关商品" />
+  </view>
+
+  <view class="goods-list" wx:if="{{goodsList.length}}">
+    <view
+      wx:for="{{goodsList}}"
+      wx:key="id"
+      class="goods-card"
+      bindtap="gotoGoodsDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="goods-card-img">
+        <image src="{{item.image}}" mode="aspectFill" />
+      </view>
+      <view class="goods-card-info">
+        <view class="goods-card-name">{{item.title}}</view>
+        <view class="goods-card-bottom">
+          <!-- <view style="color: #fa4126;">￥ <span style="font-size: 40rpx;">{{item.price}}</span> </view> -->
+          <!-- <view class="goods-card-sales">库存{{item.stock || 0}}</view> -->
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{goodsList.length > 0}}" class="load-more-container">
+    <view wx:if="{{loadMoreStatus === 'loading'}}" class="load-more-text">加载中...</view>
+    <view wx:elif="{{loadMoreStatus === 'no-more'}}" class="load-more-text">没有更多了</view>
+  </view>
+</view>
+<t-toast id="t-toast" />

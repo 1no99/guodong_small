@@ -1,0 +1,10 @@
+<view class="wrap">
+  <goods-category
+   wx:if="{{list.length>0}}"
+    level="{{3}}"
+    custom-class="goods-category-class"
+    category="{{list}}"
+    bind:changeCategory="onChange"
+  />
+  <view wx:else style="color: #ccc;width: 100vw;height: 80vh;text-align: center;line-height: 80vh;"> 暂无分类数据，请管理员添加</view>
+</view>

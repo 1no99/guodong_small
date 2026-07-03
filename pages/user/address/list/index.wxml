@@ -1,0 +1,63 @@
+<t-navbar
+  background="#ffffff"
+  title="收货地址"
+  left-arrow
+  bind:go-back="onBack"
+/>
+
+<view class="address-container">
+  <!-- 地址列表 -->
+  <view class="address-list" wx:if="{{addressList.length > 0}}">
+    <view
+      class="address-item {{item.isDefault ? 'default' : ''}}"
+      wx:for="{{addressList}}"
+      wx:key="id"
+    >
+      <!-- 选择圆圈 - 仅从订单确认页进入时显示 -->
+      <view wx:if="{{isFromOrder}}" class="address-radio" bindtap="selectAddress" data-id="{{item.id}}">
+        <view class="radio-circle {{selectedId === item.id ? 'checked' : ''}}">
+          <view wx:if="{{selectedId === item.id}}" class="radio-dot"></view>
+        </view>
+      </view>
+
+      <!-- 地址内容 -->
+      <view class="address-content" bindtap="{{isFromOrder ? 'selectAddress' : 'editAddress'}}" data-id="{{item.id}}">
+        <view class="address-header">
+          <text class="name">{{item.userName}}</text>
+          <text class="phone">{{item.phoneNumber}}</text>
+        </view>
+        <view class="address-detail">{{item.address}}</view>
+        <view class="address-tags">
+          <text wx:if="{{item.isDefault}}" class="tag tag-default">默认</text>
+          <text wx:if="{{item.tag}}" class="tag tag-primary">{{item.tag}}</text>
+        </view>
+      </view>
+
+      <!-- 右上角删除图标 - 仅非订单确认模式显示 -->
+      <view wx:if="{{!isFromOrder}}" class="delete-icon" catchtap="deleteAddress" data-id="{{item.id}}">
+        <t-icon name="close" size="36rpx" color="#999" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <t-empty description="暂无收货地址" />
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-bar">
+    <view class="btn-group">
+      <view class="add-btn" bindtap="createAddress">
+        <t-icon name="add" size="40rpx" color="#fff" />
+        <text>新建收货地址</text>
+      </view>
+      <!-- 确认按钮 - 仅从订单确认页进入时显示 -->
+      <view wx:if="{{isFromOrder}}" class="confirm-btn" bindtap="confirmSelectedAddress">
+        确认
+      </view>
+    </view>
+  </view>
+</view>
+
+<t-toast id="t-toast" />

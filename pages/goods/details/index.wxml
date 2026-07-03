@@ -1,0 +1,99 @@
+<view class="goods-detail-page">
+  <view class="goods-head">
+    <!-- <t-swiper
+      wx:if="{{details.images.length > 0}}"
+      height="750rpx"
+      current="{{current}}"
+      autoplay="{{autoplay}}"
+      duration="{{duration}}"
+      interval="{{interval}}"
+      navigation="{{navigation}}"
+      list="{{details.images}}"
+    ></t-swiper> -->
+    <image src="{{details.primaryImage }}" class="goods-head-img" mode="widthFix" />
+    <view class="goods-info">
+      <view class="goods-number">
+        <view class="goods-price">
+          <price
+            wr-class="class-goods-price"
+            symbol-class="class-goods-symbol"
+            price="{{startprce}}"
+            type="lighter"
+          />
+          <view class="goods-price-up">起</view>
+          <!-- <price wr-class="class-goods-del" price="{{maxLinePrice}}" type="delthrough" /> -->
+        </view>
+        <!-- <view class="sold-num">库存量:{{details.stock}}</view> -->
+      </view>
+     
+      <view class="goods-title">
+        <view class="goods-name">{{details.name}}</view>
+      </view>
+      <view class="goods-name">{{details.subtitle?details.subtitle:''}}</view>
+      <view class="goods-intro">{{intro?intro:''}}</view>
+    </view>
+  </view>
+  <view class="desc-content">
+    <view class="desc-content__title" >
+      <image class="img" src="{{recLeftImg}}" />
+      <span class="desc-content__title--text">详情介绍</span>
+      <image class="img" src="{{recRightImg}}" />
+    </view>
+    <view >
+      <image class="goodimg" wx:if="{{details.main_image}}" src="{{details.main_image}}" mode="widthFix" />
+      <image class="goodimg" wx:if="{{details.images1}}" src="{{details.images1}}" mode="widthFix" />
+      <image class="goodimg" wx:if="{{details.images2}}" src="{{details.images2}}" mode="widthFix" />
+      <image class="goodimg" wx:if="{{details.images3}}" src="{{details.images3}}" mode="widthFix" />
+      <image class="goodimg" wx:if="{{details.images4}}" src="{{details.images4}}" mode="widthFix" />
+      <image class="goodimg" wx:if="{{details.images5}}" src="{{details.images5}}" mode="widthFix" />
+    </view>
+  </view>
+  <view class="goods-bottom-operation">
+    <buy-bar
+      jumpArray="{{jumpArray}}"
+      soldout="{{soldout}}"
+      isStock="{{isStock}}"
+      shopCartNum="{{cartNum}}"
+      buttonType="{{buttonType}}"
+      bind:toAddCart="toAddCart"
+      bind:toNav="toNav"
+      bind:toBuyNow="buyItNow"
+      class="goods-details-card"
+    />
+  </view>
+  <goods-specs-popup
+    id="goodsSpecsPopup"
+    show="{{isSpuSelectPopupShow}}"
+    details="{{details}}"
+    count="{{buyNum}}"
+    selectedAttrStr="selectedAttrStr"
+    bind:closeSpecsPopup="handlePopupHide"
+    bind:change="chooseSpecItem"
+    bind:changeNum="changeNum"
+    bind:addCart="addCart"
+    bind:buyNow="gotoBuy"
+    bind:specsConfirm="specsConfirm"
+    bind:specChange="handleSpecChange"
+    isStock="{{isStock}}"
+    outOperateStatus="{{outOperateStatus}}"
+  >
+    <view slot="goods-price">
+      <view class="popup-sku__price">
+        <price
+          wx:if="{{!isAllSelectedSku || (!promotionSubCode && isAllSelectedSku)}}"
+          price="{{selectSkuSellsPrice ? selectSkuSellsPrice : minSalePrice }}"
+          wr-class="popup-sku__price-num"
+          symbol-class="popup-sku__price-symbol"
+        />
+        <price
+          wx:if="{{selectSkuSellsPrice === 0 && minSalePrice !== maxSalePrice && !isAllSelectedSku}}"
+          price="{{maxSalePrice}}"
+          wr-class="popup-sku__price-del"
+          type="delthrough"
+        />
+      </view>
+    </view>
+  </goods-specs-popup>
+
+</view>
+<t-toast id="t-toast" />

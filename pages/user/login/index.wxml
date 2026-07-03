@@ -1,0 +1,86 @@
+<view class="login-page">
+  <!-- 返回按钮 -->
+  <!-- <view class="back-button" bindtap="goBack">
+    返回
+  </view> -->
+
+  <!-- Logo区域 -->
+  <view class="logo-section">
+    <image class="logo" src="/pages/user/login/1.png" mode="aspectFit"></image>
+    <text class="app-name">果冻商城</text>
+  </view>
+
+  <!-- 登录区域 -->
+  <view class="login-section">
+    <view class="wechat-icon" wx:if="{{!loading}}">
+      <image src="/pages/user/login/1.png" mode="aspectFit" style="border-radius: 40rpx;"></image>
+    </view>
+
+    <text class="login-text" wx:if="{{!loading}}">使用微信授权登录</text>
+
+    <!-- 加载中状态 -->
+    <view class="loading-section" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">登录中...</text>
+    </view>
+
+    <!-- 绑定手机号 -->
+    <block wx:if="{{isLoggedIn && !hasPhone}}">
+      <text class="login-text">请输入手机号完成注册</text>
+
+      <!-- 昵称输入框 -->
+      <view class="phone-input-group">
+        <input
+          class="phone-input"
+          type="nickname"
+          placeholder="请输入昵称"
+          value="{{nickname}}"
+          bindinput="onNicknameInput"
+        />
+      </view>
+
+      <!-- 手机号输入框 -->
+      <view class="phone-input-group">
+        <input
+          class="phone-input"
+          type="number"
+          maxlength="11"
+          placeholder="请输入手机号"
+          value="{{phoneNumber}}"
+          bindinput="onPhoneInput"
+        />
+      </view>
+
+      <!-- 确认绑定按钮 -->
+      <button
+        class="login-btn wechat-btn"
+        open-type="chooseAvatar"
+        bindchooseavatar="onGetAvatarAndSubmit"
+        disabled="{{phoneNumber.length !== 11 || submitting}}"
+      >
+        {{submitting ? '绑定中...' : '确认绑定'}}
+      </button>
+    </block>
+
+    <!-- 微信一键登录按钮（未登录时显示） -->
+    <block wx:if="{{!isLoggedIn && !loading}}">
+      <button
+        class="login-btn wechat-btn"
+        bindtap="retryLogin"
+      >
+        微信一键登录
+      </button>
+    </block>
+  </view>
+
+  <!-- 用户协议 -->
+  <!-- <view class="agreement-section">
+    <text class="agreement-text">登录即表示同意</text>
+    <text class="agreement-link">《用户协议》</text>
+    <text class="agreement-text">和</text>
+    <text class="agreement-link">《隐私政策》</text>
+  </view> -->
+
+  <!-- Toast -->
+  <t-toast id="t-toast" />
+</view>

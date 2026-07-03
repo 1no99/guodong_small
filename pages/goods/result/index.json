@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "搜索",
+  "usingComponents": {
+    "t-search": "tdesign-miniprogram/search/search",
+    "t-empty": "tdesign-miniprogram/empty/empty",
+    "t-toast": "tdesign-miniprogram/toast/toast",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-image": "/components/webp-image/index",
+    "price": "/components/price/index"
+  },
+  "onReachBottomDistance": 50
+}

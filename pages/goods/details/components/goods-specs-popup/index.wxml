@@ -1,0 +1,68 @@
+<t-popup visible="{{show}}" placement="bottom" bind:visible-change="handlePopupHide">
+  <view class="popup-container">
+    <view class="popup-close" bindtap="handlePopupHide">
+      <t-icon name="close" size="36rpx" />
+    </view>
+    <view class="popup-sku-header">
+      <image t-class="popup-sku-header__img" style="width: 160rpx;height: 160rpx;margin-right: 20rpx;border-radius: 20rpx;" src="{{iconImg?iconImg:details.main_image}}" bindtap="previewImage" />
+      <view class="popup-sku-header__goods-info">
+        <view class="popup-sku__goods-name">{{details.name}}</view>
+
+        <view class="goods-price-container" style="margin-top: 10rpx;font-size: 40rpx;color: #fa4126;">
+          ￥<span style="font-size: 50rpx;font-weight: 700;">{{sizeMoney?sizeMoney:details.price}}</span>
+        </view>
+        <view class="popup-sku__goods-name" style="color: #a8a3a3;font-size: 24rpx;">库存:{{stock}}</view>
+
+      </view>
+    </view>
+    <view class="popup-sku-body">
+      <view class="popup-sku-group-container">
+      <view style="margin-top: 30rpx;font-weight: 500;font-size: 28rpx;margin-bottom: 16rpx;">规格尺码：</view>
+        <view class="popup-sku-row" style="display: flex;flex-wrap: wrap;gap: 16rpx;">
+         <view bind:tap="showGGList" style="padding: 10rpx 40rpx 10rpx 40rpx;" data-name="{{item}}" wx:for="{{details.spec_idsName}}" wx:key="index" class="{{item == actNum?'ggBtn actcss':'ggBtn'}} ">{{item}}</view>
+        </view>
+      </view>
+      <view class="popup-sku-group-container">
+      <view style="margin-top: 30rpx;font-weight: 500;font-size: 28rpx;margin-bottom: 16rpx;">颜色类型：</view>
+        <view class="popup-sku-row" style="display: flex;flex-wrap: wrap;">
+        <view wx:for="{{SizeList}}"   wx:key="index"  style="{{item.stock==0?'color:#ccc':'color:#000'}}">
+         <view 
+         style="{{item.typeimg?'':'padding: 10rpx 40rpx 10rpx 40rpx;'}}"  
+         bind:tap="{{item.stock==0?'':'showSizeList'}}" data-money="{{item.price}}" data-name="{{item}}"
+          class="{{item.childName == actSizeNum?'ggBtn actSizecss':'ggBtn'}} "> 
+         <image class="ggimg" wx:if="{{item.typeimg}}" src="{{item.typeimg}}" alt=""/> 
+         {{item.childName}}{{item.stock==0?'(缺货)':''}}
+         </view>
+        </view>
+        </view>
+      </view>
+      <view class="popup-sku-stepper-stock">
+        <view class="popup-sku-stepper-container">
+          <view class="popup-sku__stepper-title">
+            购买数量
+            <view class="limit-text" wx:if="{{limitBuyInfo}}"> ({{limitBuyInfo}}) </view>
+          </view>
+          <t-stepper value="{{buyNum}}" min="{{1}}" max="{{stock}}" theme="filled" bind:change="handleBuyNumChange" />
+        </view>
+      </view>
+    </view>
+  
+    <view
+      class="popup-sku-actions flex flex-between {{!isStock ? 'popup-sku-disabled' : ''}}"
+      wx:if="{{!outOperateStatus}}"
+    >
+      <view class="sku-operate">
+        <view class="selected-sku-btn sku-operate-addCart {{!isStock ? 'disabled' : ''}}" bindtap="addCart">
+          加入购物车
+        </view>
+      </view>
+      <view class="sku-operate">
+        <view class="selected-sku-btn sku-operate-buyNow  {{!isStock ? 'disabled' : ''}}" bindtap="buyNow">
+          立即购买
+        </view>
+      </view>
+    </view>
+    <slot name="bottomSlot" />
+  </view>
+</t-popup>
+<t-toast id="t-toast" />

@@ -1,0 +1,21 @@
+<view class="privacy-mask" wx:if="{{visible}}">
+  <view class="privacy-dialog">
+    <view class="privacy-header">
+      <text class="privacy-title">隐私保护指引</text>
+    </view>
+    <view class="privacy-content">
+      <text class="privacy-text">
+        感谢您使用果冻商城！为了向您提供服务，我们需要获取您的微信昵称信息。
+      </text>
+      <text class="privacy-text">
+        请您仔细阅读
+        <text class="privacy-link" bindtap="openPrivacyContract">《小程序隐私保护指引》</text>
+        ，了解我们如何收集、使用您的个人信息。
+      </text>
+    </view>
+    <view class="privacy-footer">
+      <button class="privacy-btn privacy-btn-cancel" bindtap="onDisagree">不同意</button>
+      <button class="privacy-btn privacy-btn-agree" bindtap="onAgree">同意并继续</button>
+    </view>
+  </view>
+</view>
