@@ -21,15 +21,15 @@
               <!-- 商品图片 -->
               <image
                 class="goods-thumb"
-                src="{{item.thumb}}"
+                src="{{item.typesimg}}"
                 mode="aspectFill"
                 bindtap="goGoodsDetail"
-                data-spuId="{{item.skuId}}"
+                data-spuId="{{item.spuId}}"
               />
 
               <!-- 商品详情 -->
               <view class="goods-detail">
-                <view class="goods-title" style="width: 90%;" bindtap="goGoodsDetail" data-spuId="{{item.skuId}}">{{item.title}}</view>
+                <view class="goods-title" style="width: 90%;" bindtap="goGoodsDetail" data-spuId="{{item.spuId}}">{{item.title}}</view>
                 <!-- 调试信息 -->
             
                 <view class="goods-specs" >

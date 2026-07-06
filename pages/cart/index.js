@@ -51,6 +51,7 @@ Page({
         isAllSelected = false;
       } else {
         cartGroupData.goodsList.forEach((goods) => {
+          console.log(goods);
           if (goods.isSelected) {
             totalAmount += goods.price * goods.quantity;
             selectedGoodsCount += goods.quantity;
@@ -258,6 +259,7 @@ Page({
   },
 
   goGoodsDetail(e) {
+    console.log(e);
     const quantity = e.currentTarget.dataset.spuid;
     wx.navigateTo({
       url: `/pages/goods/details/index?spuId=${quantity}`,

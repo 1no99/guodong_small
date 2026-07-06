@@ -7,7 +7,7 @@
   <!-- Logo区域 -->
   <view class="logo-section">
     <image class="logo" src="/pages/user/login/1.png" mode="aspectFit"></image>
-    <text class="app-name">果冻商城</text>
+    <text class="app-name">果冻小衣橱</text>
   </view>
 
   <!-- 登录区域 -->
@@ -59,6 +59,12 @@
         disabled="{{phoneNumber.length !== 11 || submitting}}"
       >
         {{submitting ? '绑定中...' : '确认绑定'}}
+      </button>
+      <button
+      bindtap="gotopages"
+        style="background-color: #fff;width: 100%;margin-top: 10rpx;border: 1px solid #ccc;height: 45px;line-height: 45px;border-radius: 10rpx;"
+      >
+        返回主页
       </button>
     </block>
 

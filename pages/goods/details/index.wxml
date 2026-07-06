@@ -27,9 +27,9 @@
       </view>
      
       <view class="goods-title">
-        <view class="goods-name">{{details.name}}</view>
+        <view class="goods-name" style="font-weight: 700;">{{details.name}}</view>
       </view>
-      <view class="goods-name">{{details.subtitle?details.subtitle:''}}</view>
+      <view style="font-size: 34rpx;" class="goods-name">{{details.subtitle?details.subtitle:''}}</view>
       <view class="goods-intro">{{intro?intro:''}}</view>
     </view>
   </view>

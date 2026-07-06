@@ -87,7 +87,7 @@ export function fetchCartGroupData() {
       if (cartData.code === 0) {
         // 获取购物车商品列表
         const cartList = Array.isArray(cartData.data?.list) ? cartData.data.list : [];
-
+        console.log(cartList);
         if (cartList.length === 0) {
           return {
             goodsList: [],
@@ -134,6 +134,7 @@ function transformCartData(backendData) {
   }
 
   cartList.forEach(item => {
+    console.log(item);
     // 确保 is_valid 是布尔值，默认为 true（商品有效）
     const isValid = item.is_valid === true || item.is_valid === undefined;
     // 获取该商品的规格数据
@@ -155,11 +156,18 @@ function transformCartData(backendData) {
     } else {
 
     }
-
+    let typesimg = ''
+    let sku_idarrs = item.sku_id?item.sku_id.split(','):[]
+    for(let yy of item.good_types){
+      if(sku_idarrs.length > 0 && yy.parentName == sku_idarrs[0] && yy.childName == sku_idarrs[1]){
+        typesimg = yy.typeimg
+      }
+    }
 
     const goodsItem = {
       cart_id: item.cart_id,
       act_num_id: item.act_num_id,
+      typesimg: typesimg,
       spuId: item.product_id,
       skuId: item.sku_id || null,
       title: item.name,

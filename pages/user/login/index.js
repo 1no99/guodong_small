@@ -117,7 +117,11 @@ Page({
       }, 2000);
     }
   },
-
+  gotopages(){
+    wx.switchTab({
+      url: '/pages/home/home',
+    });
+  },
   // 手机号输入
   onPhoneInput(e) {
     this.setData({
