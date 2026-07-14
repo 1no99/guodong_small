@@ -110,7 +110,9 @@ page {
   align-items: center;
   margin-top: 20rpx;
 }
-
+.t-toast{
+  z-index: 999999 !important;
+}
 .goods-detail-page .goods-info .goods-title .goods-name {
   width: 600rpx;
   font-weight: 500;

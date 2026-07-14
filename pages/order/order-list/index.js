@@ -58,7 +58,18 @@ Page({
       url: '/pages/usercenter/index',
     });
   },
-
+  callInfo(val){
+      const text = `订单编号：${val.currentTarget.dataset.id}\n下单人手机号：${ val.currentTarget.dataset.upone}`;
+      wx.setClipboardData({
+        data: text,
+        success() {
+          wx.showToast({
+            title: '已复制到剪切板',
+            icon: 'success',
+          });
+        },
+      });
+  },
   onShow() {
     if (!this.data.backRefresh) return;
     this.onRefresh();

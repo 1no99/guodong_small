@@ -79,9 +79,13 @@
           <view style="text-align: right;font-size: 24rpx;color: #8b8282;margin-top: 16rpx;"> 共{{order.total_items}}件</view>
       
           <!-- 订单按钮栏 -->
-          <view wx:if="{{order.orderStatus == 0}}" bind:tap="updateStatus" data-id="{{order.orderId}}" style="height: 45rpx;width: 130rpx;border: 1px solid #ccc;text-align: center;border-radius: 10rpx;font-size: 24rpx;line-height: 40rpx;float: right;margin-top: 10rpx;">取消订单</view>
+      
         </view>
       </view>
+      <view style="display: flex;justify-content: flex-end;">
+          <view wx:if="{{order.orderStatus == 0}}" bind:tap="callInfo" data-upone="{{order.user_phone}}" data-id="{{order.orderNo}}" style="height: 45rpx;width: 130rpx;border: 1px solid #ccc;text-align: center;border-radius: 10rpx;font-size: 24rpx;line-height: 40rpx;float: right;margin-top: 10rpx;margin-right: 15rpx;">复制分享</view>
+          <view wx:if="{{order.orderStatus == 0}}" bind:tap="updateStatus" data-id="{{order.orderId}}" style="height: 45rpx;width: 130rpx;border: 1px solid #ccc;text-align: center;border-radius: 10rpx;font-size: 24rpx;line-height: 40rpx;float: right;margin-top: 10rpx;">取消订单</view>
+         </view>
     </view>
     <!-- 列表加载中/已全部加载 -->
     <view wx:if="{{!pullDownRefreshing && orderList.length > 0}}" class="load-more-container">

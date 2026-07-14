@@ -2,8 +2,14 @@
   background-color: #ffffff;
   position: relative;
   z-index: 100;
+  height: 90vh;
   border-radius: 16rpx 16rpx 0 0;
   padding-bottom: calc(env(safe-area-inset-bottom) + 20rpx);
+  display: flex;
+  flex-direction: column;
+}
+.t-toast{
+  z-index: 999999 !important;
 }
 .ggimg{
   width: 40rpx;height: 40rpx;margin-right: 10rpx;margin-left: 10rpx;border-radius: 10rpx;
@@ -74,8 +80,22 @@
 
 .popup-sku-body {
   padding: 0 30rpx 40rpx;
-  max-height: 600rpx;
-  height: auto;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-sku-group-color {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.color-scroll {
+  flex: 1;
+  overflow: hidden;
 }
 
 .popup-sku-body .popup-sku-group-container .popup-sku-row {
@@ -355,15 +375,79 @@
   align-items: center;
   justify-content: center;
 }
+.preview-close-btn {
+  position: fixed;
+  top: 20rpx;
+  right: 30rpx;
+  z-index: 100000;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chlickImg{
+  color: #fff;
+  font-size: 40rpx;
+  position: fixed;
+  top: 20rpx;
+}
+.addnums{
+  position: absolute;
+  z-index: 99999;
+  bottom: 80rpx;
+  left: 99rpx;
+}
+.addpiw{
+  position: fixed;
+    right: 30rpx;
+    bottom: 68rpx;
+    background-color: #fa4126;
+    color: #fff;
+    border-radius: 48rpx;
+    padding: 20rpx 60rpx;
+    /* width: 300rpx; */
+    text-align: center;
+}
+.image-preview-viewport {
+  width: 100vw;
+  height: 80vh;
+  overflow: hidden;
+}
 
-.image-preview-swiper {
+.image-preview-track {
   width: 100%;
-  height: 800rpx;
+  height: 100%;
+  display: flex;
+  will-change: transform;
+}
+
+.preview-image-container {
+  width: 100vw;
+  height: 80vh;
+  min-width: 100vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .preview-image {
   width: 100%;
   height: 100%;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+.preview-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .image-preview-counter {

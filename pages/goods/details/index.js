@@ -177,13 +177,13 @@ console.log(val);
           selector: '#t-toast',
           message: '已加入购物车',
           icon: '',
-          duration: 1500,
+          duration: 500,
         });
 
         // 更新购物车数量
 
         // 关闭弹窗
-        this.handlePopupHide();
+        // this.handlePopupHide();
       })
       .catch((error) => {
         Toast({

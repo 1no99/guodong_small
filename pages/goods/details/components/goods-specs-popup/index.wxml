@@ -1,4 +1,4 @@
-<t-popup visible="{{show}}" placement="bottom" bind:visible-change="handlePopupHide">
+<t-popup visible="{{show}}" placement="bottom" :height='100%' bind:visible-change="handlePopupHide">
   <view class="popup-container">
     <view class="popup-close" bindtap="handlePopupHide">
       <t-icon name="close" size="36rpx" />
@@ -15,26 +15,29 @@
 
       </view>
     </view>
-    <scroll-view class="popup-sku-body" scroll-y enhanced show-scrollbar="{{false}}">
+    <view style="padding-left: 30rpx;color: #fa4126;font-weight: 700;padding-top: 10rpx;">↑ 点击可看大图</view>
+    <view class="popup-sku-body">
       <view class="popup-sku-group-container">
       <view style="margin-top: 30rpx;font-weight: 500;font-size: 28rpx;margin-bottom: 16rpx;">规格尺码：</view>
         <view class="popup-sku-row" style="display: flex;flex-wrap: wrap;gap: 16rpx;">
          <view bind:tap="showSizeList" style="padding: 10rpx 15rpx" data-name="{{item}}" wx:for="{{allSizeList}}" wx:key="childName" class="{{item.childName == actSizeNum?'ggBtn actSizecss':'ggBtn'}}">{{item.childName}}</view>
         </view>
       </view>
-      <view class="popup-sku-group-container" wx:if="{{ColorList.length > 0}}">
+      <view class="popup-sku-group-container popup-sku-group-color" wx:if="{{ColorList.length > 0}}">
       <view style="margin-top: 30rpx;font-weight: 500;font-size: 28rpx;margin-bottom: 16rpx;">颜色类型：</view>
-        <view class="popup-sku-row" style="display: flex;flex-wrap: wrap;">
-        <view wx:for="{{ColorList}}"   wx:key="index"  style="{{item.stock==0?'color:#ccc':'color:#000'}}">
-         <view 
-         style="{{item.typeimg?'':'padding: 10rpx 40rpx 10rpx 40rpx;'}}"  
-         bind:tap="{{item.stock==0?'':'showGGList'}}" data-money="{{item.price}}" data-name="{{item}}"
-          class="{{item.parentName == actNum?'ggBtn actcss':'ggBtn'}} "> 
-         <image class="ggimg" wx:if="{{item.typeimg}}" src="{{item.typeimg}}" alt=""/> 
-         {{item.parentName}}{{item.stock==0?'(缺货)':''}}
-         </view>
+      <scroll-view class="color-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+        <view class="popup-sku-row" style="display: flex;flex-wrap: wrap">
+          <view wx:for="{{ColorList}}"  wx:key="index"  style="{{item.stock==0?'color:#ccc':'color:#000'}}">
+          <view 
+          style="{{item.typeimg?'':'padding: 10rpx 40rpx 10rpx 40rpx;'}}"  
+          bind:tap="{{item.stock==0?'':'showGGList'}}" data-money="{{item.price}}" data-name="{{item}}"
+            class="{{item.parentName == actNum?'ggBtn actcss':'ggBtn'}} "> 
+          <image class="ggimg" wx:if="{{item.typeimg}}" src="{{item.typeimg}}" alt=""/> 
+          {{item.parentName}}{{item.stock==0?'(缺货)':''}}
+          </view>
+          </view>
         </view>
-        </view>
+      </scroll-view>
       </view>
       <view class="popup-sku-stepper-stock">
         <view class="popup-sku-stepper-container">
@@ -45,7 +48,7 @@
           <t-stepper value="{{buyNum}}" min="{{1}}" max="{{stock}}" theme="filled" bind:change="handleBuyNumChange" />
         </view>
       </view>
-    </scroll-view>
+    </view>
   
     <view
       class="popup-sku-actions flex flex-between {{!isStock ? 'popup-sku-disabled' : ''}}"
@@ -67,16 +70,33 @@
 </t-popup>
 
 <!-- 图片预览层 -->
-<view class="image-preview-overlay" wx:if="{{showImagePreview}}" catch:touchmove="preventMove" bindtap="closeImagePreview">
-  <swiper class="image-preview-swiper" current="{{previewImageIndex}}"
-    bind:change="onPreviewSwiperChange"
-    duration="300" circular="{{false}}">
-    <swiper-item wx:for="{{previewImageList}}" wx:key="childName">
-      <image src="{{item.typeimg}}" mode="aspectFit" class="preview-image" catchtap="preventClose" />
-    </swiper-item>
-  </swiper>
-  <view class="image-preview-size-name" catchtap="preventClose">{{previewImageList[previewImageIndex].parentName}}</view>
-  <view class="image-preview-counter" catchtap="preventClose">{{previewImageIndex + 1}} / {{previewImageList.length}}</view>
+<view class="image-preview-overlay" wx:if="{{showImagePreview}}" catch:touchmove="preventMove" bindtap="onOverlayTap">
+  <view class="preview-close-btn" catchtap="closeImagePreview">
+    <t-icon name="close" size="40rpx" color="#fff" />
+  </view>
+  <view class="image-preview-viewport">
+    <view class="image-preview-track"
+      style="display:flex;transition:{{swiperTransition}};transform:translateX({{swiperOffset}}px);will-change:transform;">
+      <view wx:for="{{previewImageList}}" wx:key="index" class="preview-image-container"
+        catchtouchstart="onPreviewTouchStart"
+        catchtouchmove="onPreviewTouchMove"
+        catchtouchend="onPreviewTouchEnd">
+        <image src="{{item.typeimg}}" mode="aspectFit" class="preview-image"
+          style="transform: scale({{imageScale}}) translate({{imageTranslateX}}px, {{imageTranslateY}}px); {{imageScale > 1 ? 'transition:none;' : 'transition:transform 0.3s ease;'}}" />
+      </view>
+    </view>
+  </view>
+  <view class="image-preview-size-name">{{previewImageList[previewImageIndex].parentName}}</view>
+  <view class="image-preview-counter">{{previewImageIndex + 1}} / {{previewImageList.length}}</view>
+  <view class="">
+    <view catchtap="onPreviewAddCart" data-type="2" class="addpiw">
+      加入购物车
+    </view>
+    <view class="addnums">
+      <t-stepper value="{{buyNum}}" min="{{1}}" max="{{stock}}" theme="filled" bind:change="handleBuyNumChange" />
+    </view>
+  </view>
+  <view class="chlickImg">双击图片可放大</view>
 </view>
 
 <t-toast id="t-toast" />
