@@ -65,7 +65,71 @@
         </view>
       </block>
     </view>
-   
+    <view class="goods-wrap" wx:if="{{cartGroupData.invalidGoodsList.length > 0}}">
+     <view style="padding: 0 10rpx;height: 80rpx;background-color:#ddddd6;line-height: 80rpx;border-bottom: 1px solid #ccc;font-weight: 700;color: #575353;">
+     已过期商品 <text style="float: right;margin-right: 20rpx;color: #4099ef;" catchtap="onGoodsDeletefalse">清除</text> </view>
+      <block wx:for="{{cartGroupData.invalidGoodsList}}" wx:key="cart_id">
+        <view class="goods-item">
+          <view class="goods-item-info" style="background-color: #ddddd6;margin: 0;border-radius: 0px;">
+            <!-- 选择框 -->
+            <!-- <view class="check-wrap" catchtap="onGoodsSelect" data-goods="{{item}}">
+              <t-icon
+                size="40rpx"
+                color="{{item.isSelected ? '#FA4126' : '#BBBBBB'}}"
+                name="{{item.isSelected ? 'check-circle-filled' : 'circle'}}"
+              />
+            </view> -->
+
+            <!-- 商品信息 -->
+            <view class="goods-sku-info">
+              <!-- 商品图片 -->
+              <image
+                class="goods-thumb"
+                style="opacity: 0.6;"
+                src="{{item.typesimg}}"
+                mode="aspectFill"
+                bindtap="goGoodsDetail"
+                data-spuId="{{item.spuId}}"
+              />
+
+              <!-- 商品详情 -->
+              <view class="goods-detail">
+                <view class="goods-title" style="width: 90%;" bindtap="goGoodsDetail" data-spuId="{{item.spuId}}">{{item.title}}</view>
+                <!-- 调试信息 -->
+            
+                <view class="goods-specs" >
+                    <text  class="spec-item">{{item.specInfo}}</text>
+                </view>
+
+                <!-- 价格和数量 -->
+                <view class="goods-footer">
+                  <view class="goods-price">
+                    <text class="price-symbol">¥</text>
+                    <text class="price-value">{{item.price}}</text>
+                  </view>
+
+                  <!-- 数量选择器 -->
+                  <!-- <view class="stepper-wrap">
+                    <view class="stepper-btn" catchtap="onStepperChange" data-goods="{{item}}" data-type="minus">
+                      <text>-</text>
+                    </view>
+                    <view class="stepper-input">{{item.quantity}}</view>
+                    <view class="stepper-btn" catchtap="onStepperChange" data-goods="{{item}}" data-type="plus">
+                      <text>+</text>
+                    </view>
+                  </view> -->
+                </view>
+              </view>
+
+              <!-- 删除按钮 -->
+              <view class="delete-btn" catchtap="onGoodsDelete" data-goods="{{item}}">
+                <t-icon name="delete" size="40rpx" color="#BBBBBB" />
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
 
     <!-- 底部结算栏 -->
     <view class="cart-bar fixed-bottom">

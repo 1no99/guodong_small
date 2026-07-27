@@ -139,7 +139,6 @@ function transformCartData(backendData) {
     const isValid = item.is_valid === true || item.is_valid === undefined;
     // 获取该商品的规格数据
     const specMap = item.specData?.map || {};
-
     // 使用 sku_id 作为规格ID去匹配
     let specs = [];
     if (item.sku_id && specMap && Object.keys(specMap).length > 0) {
@@ -162,10 +161,12 @@ function transformCartData(backendData) {
       if(sku_idarrs.length > 0 && yy.parentName == sku_idarrs[0] && yy.childName == sku_idarrs[1]){
         typesimg = yy.typeimg
       }
+     
     }
 
     const goodsItem = {
       cart_id: item.cart_id,
+      good_types:item.good_types,
       act_num_id: item.act_num_id,
       typesimg: typesimg,
       spuId: item.product_id,
@@ -181,13 +182,23 @@ function transformCartData(backendData) {
       specInfo: specs,
     };
 
-    if (isValid) {
+    console.log(jsgood(item));
+    if (jsgood(item)) {
       validGoodsList.push(goodsItem);
     } else {
       invalidGoodsList.push(goodsItem);
     }
   });
-
+ //计算商品是否过期
+ function jsgood(item){
+  let ret = false
+  for(let y of item.good_types){
+    if(item.act_num_id == y.id){
+     return ret = true
+    }
+  }
+  return ret
+ }
   const result = {
     goodsList: validGoodsList,
     invalidGoodsList: invalidGoodsList,

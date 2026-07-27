@@ -288,7 +288,12 @@ Page({
       });
     });
   },
-
+  onGoodsDeletefalse(e) {
+   for(let y of this.data.cartGroupData.invalidGoodsList)
+      removeFromCart(y.cart_id).then(() => {
+        this.refreshData();
+      });
+  },
   onToSettle() {
     const goodsRequestList = [];
     const selectedCount = this.data.cartGroupData?.selectedGoodsCount || 0;

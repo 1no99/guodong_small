@@ -86,10 +86,13 @@
       </view>
     </view>
   </view>
-  <view class="image-preview-size-name">{{previewImageList[previewImageIndex].parentName}}</view>
+  <view class="image-preview-size-name">{{previewImageList[previewImageIndex].parentName}}{{previewImageList[previewImageIndex].stock == 0?'(缺货)':''}}</view>
   <view class="image-preview-counter">{{previewImageIndex + 1}} / {{previewImageList.length}}</view>
   <view class="">
-    <view catchtap="onPreviewAddCart" data-type="2" class="addpiw">
+    <view wx:if="{{previewImageList[previewImageIndex].stock != 0}}" catchtap="onPreviewAddCart" data-type="2" class="addpiw">
+      加入购物车
+    </view>
+    <view wx:else catchtap="onPreviewAddCart" data-type="111" class="addpiw" style="background-color: #a8a3a3;">
       加入购物车
     </view>
     <view class="addnums">

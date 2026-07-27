@@ -122,12 +122,16 @@ Component({
         const colorItems = [];
         let actNumskey = ''
         let stock = ''
+        let price = ''
+        let actNumId = ''
         for (const y of this.properties.details.spec_ids) {
           if (y.childName === first.childName) {
             colorItems.push(y);
             if(!actNumskey){
               actNumskey = y.parentName
               stock = y.stock
+              price = y.price
+              actNumId=y.id
             }
           }
         }
@@ -136,7 +140,9 @@ Component({
           actSizeNum: first.childName,
           ColorList: colorItems,
           actNum:actNumskey,
-          stock:stock
+          stock:stock,
+          sizeMoney:price,
+          actNumId:actNumId,
         });
       }
     },
@@ -430,6 +436,15 @@ Component({
 
     // 预览层加入购物车
     onPreviewAddCart(e) {
+      if(e.currentTarget.dataset.type == '111'){
+        return  Toast({
+          context: this,
+          selector: '#t-toast',
+          message: '该商品缺货中...',
+          icon: '',
+          duration: 500,
+        });
+      }
       if (e.currentTarget.dataset.type && e.currentTarget.dataset.type == '2') {
         this.addCart();
       }
@@ -458,6 +473,16 @@ Component({
           duration: 500,
         });
       }
+      if(this.data.stock == 0){
+        return  Toast({
+           context: this,
+           selector: '#t-toast',
+           message: '当前商品库存不足！',
+           icon: '',
+           duration: 1000,
+         });
+       }
+      
       this.properties.selectedAttrStr = this.data.actNum+','+this.data.actSizeNum
       this.triggerEvent('addCart',{size:this.properties.selectedAttrStr,sizeMoney:this.data.sizeMoney?this.data.sizeMoney:this.properties.details.price,actNumId:this.data.actNumId});
     },
@@ -471,6 +496,15 @@ Component({
            context: this,
            selector: '#t-toast',
            message: '请选择规格尺码和颜色类型',
+           icon: '',
+           duration: 1000,
+         });
+       }
+       if(this.data.stock == 0){
+        return  Toast({
+           context: this,
+           selector: '#t-toast',
+           message: '当前商品库存不足！',
            icon: '',
            duration: 1000,
          });

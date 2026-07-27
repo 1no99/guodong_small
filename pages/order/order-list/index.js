@@ -81,7 +81,7 @@ Page({
       this.getOrderList(this.data.curTab);
     }
   },
-  updateStatus(val){
+  qxfun(val){
     put('/order/update-status', {
       id:  val.currentTarget.dataset.id,
       order_status: 4,
@@ -112,6 +112,28 @@ Page({
         throw err;
       });
   },
+  updateStatus(val){
+    wx.showModal({
+      title: '确认取消', // 弹窗标题
+      content: '订单取消后无法恢复只能重新下单，确定要取消吗？', // 提示内容
+      confirmText: '确定', // 确认按钮文字（默认确定）
+      confirmColor: '#ff0000', // 确认按钮颜色（红色醒目）
+      cancelText: '取消', // 取消按钮文字（默认取消）
+      success: (res) => {
+        // 用户点击【确定】
+        if (res.confirm) {
+          this.qxfun(val)
+        } 
+        // 用户点击【取消】
+        else if (res.cancel) {
+          console.log('用户取消');
+          // 无需操作，弹窗自动关闭
+        }
+      }
+    });
+   
+  },
+  
   onPageScroll(e) {
     this.pullDownRefresh && this.pullDownRefresh.onPageScroll(e);
   },
