@@ -14,6 +14,14 @@ const menuData = [
    
   ],
   [
+    {
+      title: '代客下单（管理员）',
+      tit: '',
+      url: '',
+      type: 'adminOder',
+    },
+  ],
+  [
    
     {
       title: '联系客服',
@@ -158,9 +166,15 @@ getuserInfoFun(){
             ...(orderInfo[index] || {}),
           }))
         : orderTagInfos;
+      // 仅管理员手机号展示代客下单模块
+      const adminPhone = '15760083770';
+      const phone = wx.getStorageSync('userInfo')?.phone || '';
+      const filteredMenuData = menuData.filter(group => {
+        return !group.some(item => item.type === 'adminOder') || phone === adminPhone;
+      });
       this.setData({
         userInfo,
-        menuData,
+        menuData: filteredMenuData,
         orderTagInfos: info,
         customerServiceInfo,
         currAuthStep: 2,
@@ -200,30 +214,11 @@ getuserInfoFun(){
         this.openMakePhone();
         break;
       }
-      case 'help-center': {
-        Toast({
-          context: this,
-          selector: '#t-toast',
-          message: '你点击了帮助中心',
-          icon: '',
-          duration: 1000,
-        });
+      case 'adminOder': {
+        this.showAdminPhoneDialog();
         break;
       }
-      case 'point': {
-        Toast({
-          context: this,
-          selector: '#t-toast',
-          message: '你点击了积分菜单',
-          icon: '',
-          duration: 1000,
-        });
-        break;
-      }
-      case 'coupon': {
-        wx.navigateTo({ url: '/pages/coupon/coupon-list/index' });
-        break;
-      }
+      
       default: {
         Toast({
           context: this,
@@ -235,6 +230,33 @@ getuserInfoFun(){
         break;
       }
     }
+  },
+
+  // 代客下单：弹窗输入手机号
+  showAdminPhoneDialog() {
+    wx.showModal({
+      title: '代客下单',
+      editable: true,
+      placeholderText: '请输入手机号',
+      success: (res) => {
+        if (res.confirm) {
+          const phone = (res.content || '').trim();
+          if (!phone) {
+            Toast({ context: this, selector: '#t-toast', message: '请输入手机号', icon: '' });
+            return;
+          }
+          if (!/^1\d{10}$/.test(phone)) {
+            Toast({ context: this, selector: '#t-toast', message: '请输入正确的手机号', icon: '' });
+            return;
+          }
+          const userInfo = wx.getStorageSync('userInfo') || {};
+          userInfo.phone = phone;
+          wx.setStorageSync('userInfo', userInfo);
+          // 强制刷新当前页面
+          wx.reLaunch({ url: '/pages/usercenter/index' });
+        }
+      },
+    });
   },
 
   jumpNav(e) {

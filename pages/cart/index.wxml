@@ -23,8 +23,9 @@
                 class="goods-thumb"
                 src="{{item.typesimg}}"
                 mode="aspectFill"
-                bindtap="goGoodsDetail"
                 data-spuId="{{item.spuId}}"
+                bindtap="onPreviewImage"
+                data-src="{{item.typesimg}}"
               />
 
               <!-- 商品详情 -->
@@ -88,8 +89,8 @@
                 style="opacity: 0.6;"
                 src="{{item.typesimg}}"
                 mode="aspectFill"
-                bindtap="goGoodsDetail"
-                data-spuId="{{item.spuId}}"
+                bindtap="onPreviewImage"
+                data-src="{{item.typesimg}}"
               />
 
               <!-- 商品详情 -->

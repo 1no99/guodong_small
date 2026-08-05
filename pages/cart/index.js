@@ -144,6 +144,16 @@ Page({
   },
 
 
+  // 预览商品大图
+  onPreviewImage(e) {
+    const src = e.currentTarget.dataset.src;
+    if (!src) return;
+    wx.previewImage({
+      current: src,
+      urls: [src],
+    });
+  },
+
   onGoodsSelect(e) {
     const goods = e.currentTarget.dataset.goods;
     const { spuId, skuId } = goods;

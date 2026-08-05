@@ -64,7 +64,7 @@
     </view>
     <view class="price-row">
       <text class="price-label">运费</text>
-      <text class="price-value">免运费</text>
+      <text class="price-value">联系客服</text>
     </view>
     <view class="price-row total">
       <text class="price-label">合计</text>

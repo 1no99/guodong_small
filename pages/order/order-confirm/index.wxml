@@ -51,7 +51,7 @@
           +
           <price fill decimalSmaller price="{{settleDetailData.totalDeliveryFee}}" />
         </block>
-        <text wx:else>免运费</text>
+        <text wx:else>联系客服</text>
       </view>
     </view>
     <view class="pay-item">
