@@ -22,7 +22,7 @@ Page({
       this.setData({
         order:res
       })
-      console.log(this.data.order,res.data,order);
+      //console.log(this.data.order,res.data,order);
     });
   },
   updateStatus(){
@@ -31,7 +31,7 @@ Page({
       order_status: 4,
     }, true)
       .then((data) => {
-        console.log(data);
+        //console.log(data);
         if(data.code == 0){
           Toast({
             context: this,

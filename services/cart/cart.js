@@ -40,7 +40,8 @@ export function removeFromCart(cartId) {
   const userInfo = wx.getStorageSync('userInfo') || {};
   const phone = userInfo.phone || '';
 
-  return deleteRequest(`/cart/item/${cartId}`, {
+  return deleteRequest(`/cart/item/delete`, {
+    id:cartId,
     phone: phone,
   }, true);
 }
@@ -87,7 +88,7 @@ export function fetchCartGroupData() {
       if (cartData.code === 0) {
         // 获取购物车商品列表
         const cartList = Array.isArray(cartData.data?.list) ? cartData.data.list : [];
-        console.log(cartList);
+        //console.log(cartList);
         if (cartList.length === 0) {
           return {
             goodsList: [],
@@ -134,71 +135,18 @@ function transformCartData(backendData) {
   }
 
   cartList.forEach(item => {
-    console.log(item);
+    //console.log(item);
     // 确保 is_valid 是布尔值，默认为 true（商品有效）
-    const isValid = item.is_valid === true || item.is_valid === undefined;
-    // 获取该商品的规格数据
-    const specMap = item.specData?.map || {};
-    // 使用 sku_id 作为规格ID去匹配
-    let specs = [];
-    if (item.sku_id && specMap && Object.keys(specMap).length > 0) {
-      const skuIdStr = String(item.sku_id).trim();
-
-      const specValue = specMap[skuIdStr];
-      if (specValue) {
-        specs.push({
-          specId: skuIdStr,
-          specValue: specValue,
-          specName: specValue
-        });
-      }
+    
+    item.isSelected = true
+    if (item.good_type.length > 0) {
+      item.typeimg = item.good_type[0].typeimg
+      validGoodsList.push(item);
     } else {
-
-    }
-    let typesimg = ''
-    let sku_idarrs = item.sku_id?item.sku_id.split(','):[]
-    for(let yy of item.good_types){
-      if(sku_idarrs.length > 0 && yy.parentName == sku_idarrs[0] && yy.childName == sku_idarrs[1]){
-        typesimg = yy.typeimg
-      }
-     
-    }
-
-    const goodsItem = {
-      cart_id: item.cart_id,
-      good_types:item.good_types,
-      act_num_id: item.act_num_id,
-      typesimg: typesimg,
-      spuId: item.product_id,
-      skuId: item.sku_id || null,
-      title: item.name,
-      thumb: item.main_image,
-      price: parseFloat(item.size_money) || 0,
-      quantity: item.quantity,
-      stockQuantity: item.stock || 0,
-      isSelected: true,
-      is_valid: isValid,
-      specs: specs,
-      specInfo: specs,
-    };
-
-    console.log(jsgood(item));
-    if (jsgood(item)) {
-      validGoodsList.push(goodsItem);
-    } else {
-      invalidGoodsList.push(goodsItem);
+      invalidGoodsList.push(item);
     }
   });
- //计算商品是否过期
- function jsgood(item){
-  let ret = false
-  for(let y of item.good_types){
-    if(item.act_num_id == y.id){
-     return ret = true
-    }
-  }
-  return ret
- }
+
   const result = {
     goodsList: validGoodsList,
     invalidGoodsList: invalidGoodsList,

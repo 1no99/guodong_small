@@ -74,6 +74,8 @@ Component({
     showImagePreview: false,
     previewImageList: [],
     previewImageIndex: 0,
+    visibleImages: [],
+    _visibleStart: 0,
     imageScale: 1,
     imageTranslateX: 0,
     imageTranslateY: 0,
@@ -135,7 +137,7 @@ Component({
             }
           }
         }
-        console.log(actNumskey);
+        //console.log(actNumskey);
         this.setData({
           actSizeNum: first.childName,
           ColorList: colorItems,
@@ -261,20 +263,23 @@ Component({
         const idx = imageColors.findIndex(item => item.parentName === this.data.actNum);
         if (idx >= 0) currentIndex = idx;
       }
+      const visible = this._computeVisibleImages(imageColors, currentIndex);
       this.setData({
         showImagePreview: true,
         previewImageList: imageColors,
         previewImageIndex: currentIndex,
+        visibleImages: visible.images,
+        _visibleStart: visible.start,
         imageScale: 1,
         imageTranslateX: 0,
         imageTranslateY: 0,
-        swiperOffset: -currentIndex * this._vpW,
+        swiperOffset: -visible.centerOffset * this._vpW,
         swiperTransition: 'none',
       });
     },
 
     closeImagePreview() {
-      this.setData({ showImagePreview: false, imageScale: 1, imageTranslateX: 0, imageTranslateY: 0, swiperOffset: 0, swiperTransition: 'none' });
+      this.setData({ showImagePreview: false, visibleImages: [], _visibleStart: 0, imageScale: 1, imageTranslateX: 0, imageTranslateY: 0, swiperOffset: 0, swiperTransition: 'none' });
     },
 
     // 图片预览 - 触摸开始
@@ -353,9 +358,11 @@ Component({
 
         if (this._swipeDir === 'h' && scale <= 1.05 && !this._swipeHandled) {
           this._isSwiping = true;
-          let offset = this._swiperBaseOffset + dx;
-          const listLen = this.data.previewImageList.length;
-          const minOffset = -(listLen - 1) * this._vpW;
+          const visibleLen = this.data.visibleImages.length;
+          const centerIdx = this.data.previewImageIndex - (this.data._visibleStart || 0);
+          const baseOffset = -centerIdx * this._vpW;
+          let offset = baseOffset + dx;
+          const minOffset = -(visibleLen - 1) * this._vpW;
           if (offset > 0) offset = offset * 0.3;
           if (offset < minOffset) offset = minOffset + (offset - minOffset) * 0.3;
           this.setData({ swiperOffset: offset, swiperTransition: 'none' });
@@ -375,7 +382,10 @@ Component({
 
       if (this._isSwiping && !this._swipeHandled) {
         this._swipeHandled = true;
-        const dx = this.data.swiperOffset - this._swiperBaseOffset;
+        const visibleLen = this.data.visibleImages.length;
+        const centerIdx = this.data.previewImageIndex - (this.data._visibleStart || 0);
+        const baseOffset = -centerIdx * this._vpW;
+        const dx = this.data.swiperOffset - baseOffset;
         const listLen = this.data.previewImageList.length;
         let newIndex = this.data.previewImageIndex;
 
@@ -384,15 +394,18 @@ Component({
           else if (dx > 0 && newIndex > 0) newIndex--;
         }
 
+        // 重新计算可见图片窗口
+        const visible = this._computeVisibleImages(this.data.previewImageList, newIndex);
         this.setData({
           previewImageIndex: newIndex,
-          swiperOffset: -newIndex * this._vpW,
+          visibleImages: visible.images,
+          _visibleStart: visible.start,
+          swiperOffset: -visible.centerOffset * this._vpW,
           swiperTransition: 'transform 0.3s ease',
           imageScale: 1,
           imageTranslateX: 0,
           imageTranslateY: 0,
         });
-        this._swiperBaseOffset = -newIndex * this._vpW;
         this._updatePreviewSku(newIndex);
       }
 
@@ -450,6 +463,22 @@ Component({
       }
     },
 
+    // 计算可见图片窗口（只渲染前、当前、后 3 张，降低 iOS 内存压力）
+    _computeVisibleImages(list, currentIndex) {
+      const len = list.length;
+      const start = Math.max(0, currentIndex - 1);
+      const end = Math.min(len - 1, currentIndex + 1);
+      const images = [];
+      for (let i = start; i <= end; i++) {
+        images.push({
+          ...list[i],
+          realIndex: i,
+          shouldLoad: true,
+        });
+      }
+      return { images, start, centerOffset: currentIndex - start };
+    },
+
     // 阻止预览层穿透滚动
     preventMove() {},
 
@@ -463,7 +492,7 @@ Component({
     addCart() {
       const { isStock } = this.properties;
       if (!isStock) return;
-      console.log(this.data);
+      //console.log(this.data);
       if(!this.data.actNum || !this.data.actSizeNum){
        return  Toast({
           context: this,

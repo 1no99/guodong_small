@@ -60,7 +60,7 @@ Page({
         imgSrcs: swiper,
         pageLoading: false,
       });
-      console.log(swiper);
+      //console.log(swiper);
       this.loadGoodsList(true);
     });
   },

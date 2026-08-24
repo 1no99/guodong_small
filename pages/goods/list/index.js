@@ -211,7 +211,7 @@ Page({
 
   handleSubmit(e) {
     const { value } = e.detail;
-    console.log(123);
+    //console.log(123);
     this.pageNum = 1;
     this.setData(
       {

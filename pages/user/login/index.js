@@ -43,10 +43,10 @@ Page({
     try {
       // 获取微信登录code
       const { code } = await wx.login();
-      console.log('wx.login code:', code);
+      //console.log('wx.login code:', code);
 
       const res = await wechatLogin(code);
-      console.log('wechatLogin response:', JSON.stringify(res));
+      //console.log('wechatLogin response:', JSON.stringify(res));
 
       if (res && res.code == 0) {
         const { token, user } = res.data || {};
@@ -151,7 +151,7 @@ Page({
             // 需要隐私授权，调用系统隐私弹窗
             wx.requirePrivacyAuthorize({
               success: () => {
-                console.log('隐私授权成功');
+                //console.log('隐私授权成功');
                 resolve(true);
               },
               fail: (err) => {

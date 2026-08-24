@@ -4,11 +4,11 @@ import { get } from '../../utils/request';
  * 获取商品详情
  */
 export function fetchGood(spuId) {
-  console.log('fetchGood: 请求商品ID =', spuId);
+  //console.log('fetchGood: 请求商品ID =', spuId);
 
   return get(`/product/detail/${spuId}`, {}, false)
     .then((data) => {
-      console.log('fetchGood: API返回数据 =', data);
+      //console.log('fetchGood: API返回数据 =', data);
 
       if (data.code === 0) {
         const product = data.data;

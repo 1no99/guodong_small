@@ -76,12 +76,13 @@
   </view>
   <view class="image-preview-viewport">
     <view class="image-preview-track"
-      style="display:flex;transition:{{swiperTransition}};transform:translateX({{swiperOffset}}px);will-change:transform;">
-      <view wx:for="{{previewImageList}}" wx:key="index" class="preview-image-container"
+      style="display:flex;transition:{{swiperTransition}};transform:translateX({{swiperOffset}}px);">
+      <view wx:for="{{visibleImages}}" wx:key="realIndex" class="preview-image-container"
+        data-real-index="{{item.realIndex}}"
         catchtouchstart="onPreviewTouchStart"
         catchtouchmove="onPreviewTouchMove"
         catchtouchend="onPreviewTouchEnd">
-        <image src="{{item.typeimg}}" mode="aspectFit" class="preview-image"
+        <image wx:if="{{item.shouldLoad}}" src="{{item.typeimg}}" mode="aspectFit" class="preview-image"
           style="transform: scale({{imageScale}}) translate({{imageTranslateX}}px, {{imageTranslateY}}px); {{imageScale > 1 ? 'transition:none;' : 'transition:transform 0.3s ease;'}}" />
       </view>
     </view>

@@ -45,7 +45,7 @@ Page({
 
   // 处理返回按钮点击
   onBack() {
-    console.log(133);
+    //console.log(133);
     if (this.data.isFromUserCenter) {
       // 从用户中心进入，直接返回用户中心
       wx.switchTab({

@@ -81,7 +81,7 @@ export function dispatchCommitPay(params) {
   if (!phone) {
     return Promise.reject(new Error('请先登录'));
   }
-console.log(params);
+//console.log(params);
   // 调用真实后端API
   return post('/order/create', {
     phone: phone,

@@ -106,7 +106,7 @@ export function getUserInfo() {
   // 先从本地存储获取
   const localUserInfo = wx.getStorageSync('userInfo');
   if (localUserInfo) {
-    console.log('从本地存储获取用户信息:', localUserInfo);
+    //console.log('从本地存储获取用户信息:', localUserInfo);
     return Promise.resolve({
       code: 0,
       data: localUserInfo

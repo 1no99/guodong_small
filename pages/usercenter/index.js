@@ -167,10 +167,10 @@ getuserInfoFun(){
           }))
         : orderTagInfos;
       // 仅管理员手机号展示代客下单模块
-      const adminPhone = '13355791935';
+      const adminPhones = ['13355791935', '15760083770'];
       const phone = wx.getStorageSync('userInfo')?.phone || '';
       const filteredMenuData = menuData.filter(group => {
-        return !group.some(item => item.type === 'adminOder') || phone === adminPhone;
+        return !group.some(item => item.type === 'adminOder') || adminPhones.includes(phone);
       });
       this.setData({
         userInfo,

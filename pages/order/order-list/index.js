@@ -88,7 +88,7 @@ Page({
       
     }, true)
       .then((data) => {
-        console.log(data);
+        //console.log(data);
         if(data.code == 0){
           Toast({
             context: this,
@@ -126,7 +126,7 @@ Page({
         } 
         // 用户点击【取消】
         else if (res.cancel) {
-          console.log('用户取消');
+          //console.log('用户取消');
           // 无需操作，弹窗自动关闭
         }
       }
@@ -155,7 +155,7 @@ Page({
     this.setData({
       status,
     });
-    console.log( this);
+    //console.log( this);
     this.refreshList(status);
   },
 
@@ -168,7 +168,7 @@ Page({
       };
     }
 
-    console.log('getOrderList - this.page:', this.page);
+    //console.log('getOrderList - this.page:', this.page);
 
     const params = {
       parameter: {
@@ -180,12 +180,12 @@ Page({
     this.setData({ listLoading: 1, loading: true });
     return fetchOrders(params)
       .then((res) => {
-        console.log('fetchOrders 返回:', res);
+        //console.log('fetchOrders 返回:', res);
         this.page.num++;
         let orderList = [];
         if (res.list) {
           orderList = res.list || [];
-          console.log('订单列表:', orderList);
+          //console.log('订单列表:', orderList);
         }
         return new Promise((resolve) => {
           if (reset) {
@@ -198,7 +198,7 @@ Page({
             loading: false,
             hasLoaded: true,
           });
-          console.log(this.data);
+          //console.log(this.data);
         });
       })
       .catch((err) => {

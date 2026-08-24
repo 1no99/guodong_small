@@ -40,13 +40,13 @@ Page({
     wx.request({
       url: 'https://guodongyichu.fun/ads.json',
       success(res) {
-        console.log(res.data.provinces);
+        //console.log(res.data.provinces);
         try {
           that.setData({
             isFromOrder: isFromOrder,
             areaData: res.data.provinces,
           });
-          console.log(that.data.areaData);
+          //console.log(that.data.areaData);
         } catch (e) {
           console.error('解析 areaData 失败:', e);
         }
@@ -235,7 +235,7 @@ Page({
       title: '保存中...',
       mask: true,
     });
-    console.log(locationState);
+    //console.log(locationState);
     // 构建地址数据
     const addressData = {
       name: locationState.name,

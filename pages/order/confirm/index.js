@@ -30,7 +30,7 @@ Page({
 
   onLoad(options) {
     const { from } = options;
-    console.log('订单确认页面加载，来源:', from);
+    //console.log('订单确认页面加载，来源:', from);
 
     if (from === 'cart') {
       // 从购物车结算过来
@@ -49,7 +49,7 @@ Page({
 
   // 加载购物车数据
   loadCartData() {
-    console.log(12311);
+    //console.log(12311);
     try {
       const cartGoodsStr = wx.getStorageSync('cart.selectedGoods');
       if (!cartGoodsStr) {
@@ -64,18 +64,18 @@ Page({
       }
 
       const goodsList = JSON.parse(cartGoodsStr);
-      console.log('购物车商品列表:', goodsList);
+      //console.log('购物车商品列表:', goodsList);
 
       // 转换数据格式
       const formattedGoodsList = goodsList.map(goods => ({
         act_num_id: goods.act_num_id,
-        id: goods.spuId,
+        id: goods.id,
         cartId: goods.cart_id,
         title: goods.title,
-        image: goods.thumb,
+        image: goods.image,
         price: goods.price,
         quantity: goods.quantity,
-        spec:goods.specInfo.join(),
+        spec:goods.spec
         // specList: goods.spec.split(',') || [],
       }));
 
@@ -93,7 +93,7 @@ Page({
   loadSingleGoodsData(goodsDataStr) {
     try {
       const goods = JSON.parse(decodeURIComponent(goodsDataStr));
-      console.log(goods);
+      //console.log(goods);
       const goodsList = [{
         act_num_id: goods.actNumId,
         id: goods.id,
@@ -122,7 +122,7 @@ Page({
   restoreFromStorage() {
     const savedData = wx.getStorageSync(GOODS_STORAGE_KEY);
     if (savedData) {
-      console.log('从本地存储恢复数据:', savedData);
+      //console.log('从本地存储恢复数据:', savedData);
       this.setData({
         goodsList: savedData.goodsList,
         totalPrice: savedData.totalPrice,
@@ -161,7 +161,7 @@ Page({
   },
 
   onShow() {
-    console.log('===== onShow 被调用 =====');
+    //console.log('===== onShow 被调用 =====');
     // 检查是否有从地址列表返回的地址数据
     const selectedAddress = wx.getStorageSync(ADDRESS_STORAGE_KEY);
     if (selectedAddress) {
@@ -183,14 +183,14 @@ Page({
       
       });
     } else {
-      console.log('存储中没有地址数据');
+      //console.log('存储中没有地址数据');
     }
 
     // 确保商品数据存在，如果丢失则从本地存储恢复
     if (!this.data.goodsList || this.data.goodsList.length === 0) {
       const savedData = wx.getStorageSync(GOODS_STORAGE_KEY);
       if (savedData) {
-        console.log('从本地存储恢复商品数据:', savedData);
+        //console.log('从本地存储恢复商品数据:', savedData);
         this.setData({
           goodsList: savedData.goodsList,
           totalPrice: savedData.totalPrice,
@@ -201,7 +201,7 @@ Page({
       }
     }
 
-    console.log('===== onShow 结束 =====');
+    //console.log('===== onShow 结束 =====');
   },
 
   // 加载收货地址列表
@@ -212,13 +212,13 @@ Page({
         // 避免覆盖用户从地址列表选择的地址
         if (!this.data.addressInfo) {
           // const defaultAddress = list.find((addr) => addr.isDefault) || list[0] || null;
-          // console.log('设置默认地址:', defaultAddress);
+          // //console.log('设置默认地址:', defaultAddress);
           // this.setData({
           //   addressList: list,
           //   addressInfo: defaultAddress,
           // });
         } else {
-          console.log('已有地址信息，不设置默认地址');
+          //console.log('已有地址信息，不设置默认地址');
           this.setData({
             addressList: list,
           });
@@ -242,7 +242,7 @@ Page({
     const value = e.detail.value;  // 从 detail 获取 value（TDesign stepper 的值）
     const goodsList = [...this.data.goodsList];
 
-    console.log(`商品 ${index} 数量变化: ${value}`);
+    //console.log(`商品 ${index} 数量变化: ${value}`);
 
     goodsList[index].quantity = value;
 
@@ -306,11 +306,11 @@ Page({
       totalAmount: this.data.totalPrice,
     };
 
-    console.log('订单数据:', orderData,goodsList);
+    //console.log('订单数据:', orderData,goodsList);
     // return
     dispatchCommitPay(orderData)
     .then((result) => {
-      console.log('订单创建成功 ===>', result);
+      //console.log('订单创建成功 ===>', result);
       wx.hideLoading();
     
       // 先清购物车
@@ -318,10 +318,15 @@ Page({
       if (cartGoodsStr) {
         try {
           const cartGoods = JSON.parse(cartGoodsStr);
+          //console.log(cartGoods);
+          let cartIdsArr = []
+          for(let y of cartGoods){
+            cartIdsArr.push(y.cartId)
+          }
           Promise.all(
-            cartGoods.map(goods => 
-              removeFromCart(goods.cart_id).catch(() => {})
-            )
+            removeFromCart(cartIdsArr.join()).then(() => {
+              wx.removeStorageSync('cart.selectedGoods');
+            })
           ).then(() => {
             wx.removeStorageSync('cart.selectedGoods');
           });

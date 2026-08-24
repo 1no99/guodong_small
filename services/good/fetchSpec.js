@@ -10,7 +10,7 @@ export function fetchSpecList(spuId) {
     .then((data) => {
       if (data.code === 0) {
         const specs = data.data || [];
-        console.log(`商品 ${spuId} 的规格数据:`, specs);
+        //console.log(`商品 ${spuId} 的规格数据:`, specs);
         // 构建规格ID到规格名称的映射
         const specMap = {};
         specs.forEach((spec) => {
@@ -38,7 +38,7 @@ export function fetchAllSpecs() {
     .then((data) => {
       if (data.code === 0) {
         const specs = data.data || [];
-        console.log('所有规格数据:', specs);
+        //console.log('所有规格数据:', specs);
         // 构建规格ID到规格名称的映射
         const specMap = {};
         specs.forEach((spec) => {

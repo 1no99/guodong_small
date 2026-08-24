@@ -1,7 +1,13 @@
 <!-- 购物车页面 -->
 <view class="cart-page">
+  <!-- 加载动画 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
   <!-- 购物车有商品 -->
-  <block wx:if="{{cartGroupData.goodsList.length > 0}}">
+  <block wx:elif="{{cartGroupData.goodsList.length > 0}}">
     <!-- 有效商品列表 -->
     <view class="goods-wrap">
       <block wx:for="{{cartGroupData.goodsList}}" wx:key="cart_id">
@@ -21,27 +27,27 @@
               <!-- 商品图片 -->
               <image
                 class="goods-thumb"
-                src="{{item.typesimg}}"
+                src="{{item.typeimg}}"
                 mode="aspectFill"
-                data-spuId="{{item.spuId}}"
                 bindtap="onPreviewImage"
-                data-src="{{item.typesimg}}"
+                data-src="{{item.typeimg}}"
               />
 
               <!-- 商品详情 -->
               <view class="goods-detail">
-                <view class="goods-title" style="width: 90%;" bindtap="goGoodsDetail" data-spuId="{{item.spuId}}">{{item.title}}</view>
+                <view class="goods-title" style="width: 90%;" bindtap="goGoodsDetail"
+                 data-spuId="{{item.product_id}}">{{item.name}}</view>
                 <!-- 调试信息 -->
             
                 <view class="goods-specs" >
-                    <text  class="spec-item">{{item.specInfo}}</text>
+                    <text  class="spec-item">{{item.sku_id}}</text>
                 </view>
 
                 <!-- 价格和数量 -->
                 <view class="goods-footer">
                   <view class="goods-price">
                     <text class="price-symbol">¥</text>
-                    <text class="price-value">{{item.price}}</text>
+                    <text class="price-value">{{item.good_type[0].price}}</text>
                   </view>
 
                   <!-- 数量选择器 -->
@@ -87,19 +93,19 @@
               <image
                 class="goods-thumb"
                 style="opacity: 0.6;"
-                src="{{item.typesimg}}"
+                src="{{item.main_image}}"
                 mode="aspectFill"
                 bindtap="onPreviewImage"
-                data-src="{{item.typesimg}}"
+                data-src="{{item.main_image}}"
               />
 
               <!-- 商品详情 -->
               <view class="goods-detail">
-                <view class="goods-title" style="width: 90%;" bindtap="goGoodsDetail" data-spuId="{{item.spuId}}">{{item.title}}</view>
+                <view class="goods-title" style="width: 90%;" bindtap="goGoodsDetail" data-spuId="{{item.product_id}}">{{item.name}}</view>
                 <!-- 调试信息 -->
             
                 <view class="goods-specs" >
-                    <text  class="spec-item">{{item.specInfo}}</text>
+                    <text  class="spec-item" style="background-color: #ccc;">{{item.sku_id}}</text>
                 </view>
 
                 <!-- 价格和数量 -->

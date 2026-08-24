@@ -5,6 +5,7 @@ import { fetchCartGroupData, updateCartItem, removeFromCart, clearCart } from '.
 Page({
   data: {
     cartGroupData: null,
+    loading: true,
   },
 
   // 调用自定义tabbar的init函数，使页面与tabbar激活状态保持一致
@@ -20,28 +21,6 @@ Page({
 
   refreshData() {
     return fetchCartGroupData().then((cartGroupData) => {
-      console.log(cartGroupData);
-      // 确保 cartGroupData 结构正确
-      if (!cartGroupData || typeof cartGroupData !== 'object') {
-        this.setData({
-          cartGroupData: {
-            goodsList: [],
-            isNotEmpty: false,
-            isAllSelected: false,
-            totalAmount: '0.00',
-            selectedGoodsCount: 0,
-          }
-        });
-        return;
-      }
-
-      // 确保 goodsList 是数组
-      if (!Array.isArray(cartGroupData.goodsList)) {
-        cartGroupData.goodsList = [];
-      }
-
-     
-
       // 计算购物车统计数据
       let totalAmount = 0;
       let selectedGoodsCount = 0;
@@ -51,9 +30,8 @@ Page({
         isAllSelected = false;
       } else {
         cartGroupData.goodsList.forEach((goods) => {
-          console.log(goods);
           if (goods.isSelected) {
-            totalAmount += goods.price * goods.quantity;
+            totalAmount += goods.good_type[0].price * goods.quantity;
             selectedGoodsCount += goods.quantity;
           } else {
             isAllSelected = false;
@@ -64,12 +42,8 @@ Page({
       cartGroupData.isAllSelected = isAllSelected;
       cartGroupData.totalAmount = totalAmount.toFixed(2);
       cartGroupData.selectedGoodsCount = selectedGoodsCount;
-      for(let y of cartGroupData.goodsList){
-        y.specInfo = y.skuId?y.skuId.split(','):[]
-        y.act_num_id = y.act_num_id
-      }
-      console.log(cartGroupData);
-      this.setData({ cartGroupData });
+    
+      this.setData({ cartGroupData, loading: false });
     }).catch((error) => {
       this.setData({
         cartGroupData: {
@@ -78,15 +52,16 @@ Page({
           isAllSelected: false,
           totalAmount: '0.00',
           selectedGoodsCount: 0,
-        }
+        },
+        loading: false,
       });
     });
   },
 
-  findGoods(spuId, skuId) {
+  findGoods(product_id, act_num_id) {
     const { goodsList } = this.data.cartGroupData;
     for (const goods of goodsList) {
-      if (goods.spuId === spuId && goods.skuId === skuId) {
+      if (goods.product_id === product_id && goods.act_num_id === act_num_id) {
         return { currentGoods: goods };
       }
     }
@@ -105,8 +80,8 @@ Page({
   },
 
   // 选择单个商品（前端状态管理，不调用后端）
-  selectGoodsService({ spuId, skuId, isSelected }) {
-    const { currentGoods } = this.findGoods(spuId, skuId);
+  selectGoodsService({ product_id, act_num_id, isSelected }) {
+    const { currentGoods } = this.findGoods(product_id, act_num_id);
     currentGoods.isSelected = isSelected;
     // 更新视图
     this.setData({
@@ -125,8 +100,10 @@ Page({
   },
 
   // 加购数量变更
-  changeQuantityService({ spuId, skuId, quantity }) {
-    const { currentGoods } = this.findGoods(spuId, skuId);
+  changeQuantityService({  product_id, act_num_id, quantity }) {
+    //console.log( product_id, act_num_id, quantity);
+    const { currentGoods } = this.findGoods( product_id, act_num_id);
+    //console.log(currentGoods);
     return updateCartItem(currentGoods.cart_id, quantity)
       .then(() => {
         currentGoods.quantity = quantity;
@@ -156,10 +133,14 @@ Page({
 
   onGoodsSelect(e) {
     const goods = e.currentTarget.dataset.goods;
-    const { spuId, skuId } = goods;
-    const { currentGoods } = this.findGoods(spuId, skuId);
+    //console.log(goods);
+    const { act_num_id, product_id } = goods;
+    //console.log(act_num_id, product_id);
+    const { currentGoods } = this.findGoods(product_id, act_num_id );
+    //console.log(currentGoods);
     const isSelected = !currentGoods.isSelected;
-    this.selectGoodsService({ spuId, skuId, isSelected }).then(() => {
+    this.selectGoodsService({  act_num_id, product_id , isSelected }).then(() => {
+      //console.log(this.data.cartGroupData);
       this.updateCartStatistics();
     });
   },
@@ -176,7 +157,8 @@ Page({
     } else {
       cartGroupData.goodsList.forEach((goods) => {
         if (goods.isSelected) {
-          totalAmount += goods.price * goods.quantity;
+          //console.log(goods);
+          totalAmount += goods.good_type[0].price * goods.quantity;
           selectedGoodsCount += goods.quantity;
         } else {
           isAllSelected = false;
@@ -207,8 +189,8 @@ Page({
   onStepperChange(e) {
     const { type } = e.currentTarget.dataset;
     const goods = e.currentTarget.dataset.goods;
-    const { spuId, skuId } = goods;
-    const { currentGoods } = this.findGoods(spuId, skuId);
+    const { product_id, act_num_id } = goods;
+    const { currentGoods } = this.findGoods(product_id, act_num_id);
 
     let newQuantity = currentGoods.quantity;
     if (type === 'minus') {
@@ -217,7 +199,7 @@ Page({
       newQuantity = newQuantity + 1;
     }
 
-    const stockQuantity = currentGoods.stockQuantity > 0 ? currentGoods.stockQuantity : 0;
+    const stockQuantity = currentGoods.good_type[0].stock > 0 ? currentGoods.good_type[0].stock : 0;
 
     // 加购数量超过库存数量
     if (newQuantity > stockQuantity) {
@@ -235,21 +217,20 @@ Page({
         selector: '#t-dialog',
         title: '商品库存不足',
         content: `当前商品库存不足，最大可购买数量为${stockQuantity}件`,
-        confirmBtn: '修改为最大可购买数量',
+        confirmBtn: '最大可购买数量',
         cancelBtn: '取消',
       })
         .then(() => {
           this.changeQuantityService({
-            spuId,
-            skuId,
+            product_id, act_num_id,
             quantity: stockQuantity,
           }).then(() => this.refreshData());
         })
         .catch(() => {});
       return;
     }
-
-    this.changeQuantityService({ spuId, skuId, quantity: newQuantity }).then(() => this.refreshData());
+    //console.log(product_id, act_num_id,newQuantity);
+    this.changeQuantityService({ product_id, act_num_id, quantity: newQuantity }).then(() => this.refreshData());
   },
 
   onStoreSelect(e) {
@@ -269,7 +250,7 @@ Page({
   },
 
   goGoodsDetail(e) {
-    console.log(e);
+    //console.log(e);
     const quantity = e.currentTarget.dataset.spuid;
     wx.navigateTo({
       url: `/pages/goods/details/index?spuId=${quantity}`,
@@ -283,7 +264,7 @@ Page({
 
   onGoodsDelete(e) {
     const goods = e.currentTarget.dataset.goods;
-    console.log(goods);
+    //console.log(goods);
     const { cart_id } = goods;
     Dialog.confirm({
       context: this,
@@ -322,8 +303,25 @@ Page({
         goodsRequestList.push(goods);
       }
     });
-    console.log(goodsRequestList,this.data.cartGroupData.goodsList);
-    wx.setStorageSync('cart.selectedGoods', JSON.stringify(goodsRequestList));
+    //console.log(goodsRequestList,this.data.cartGroupData.goodsList);
+    let cartIds = []
+    for(let y of goodsRequestList){
+      cartIds.push({
+        act_num_id: y.act_num_id,
+        cartId: y.cart_id,
+        id:y.product_id,
+        title: y.name,
+        image: y.typeimg,
+        price: y.good_type[0].price,
+        quantity: y.quantity,
+        spec:y.sku_id,
+      })
+    }
+    wx.setStorage({
+      key: "cart.selectedGoods",
+      data: JSON.stringify(cartIds),
+      success: () => {}
+    })
     const url = '/pages/order/confirm/index?from=cart';
     wx.navigateTo({ url });
   },

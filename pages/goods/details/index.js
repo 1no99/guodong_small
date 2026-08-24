@@ -87,7 +87,7 @@ Page({
 
   handleSpecChange(e) {
     const { index, specId, specName } = e.detail;
-    console.log('规格选择变化:', { index, specId, specName });
+    //console.log('规格选择变化:', { index, specId, specName });
 
     // 更新已选规格字符串
     if (index >= 0 && specId) {
@@ -151,7 +151,7 @@ Page({
     }
 
     const { selectedAttrStr, actNumId, buyNum, details, spuId } = this.data;
-console.log(val);
+//console.log(val);
     if (!val.detail.size) {
       Toast({
         context: this,
@@ -199,7 +199,7 @@ console.log(val);
 
 
   gotoBuy(val) {
-    console.log(122222222);
+    //console.log(122222222);
     // 检查登录状态
     if (!requireLogin({ force: true })) {
       // 未登录，已自动跳转到登录页
@@ -280,7 +280,7 @@ console.log(val);
         details:DetailInfo,
         startprce:DetailInfo.spec_ids.length>0?DetailInfo.spec_ids[0].price:'0'
       })
-      console.log(DetailInfo);
+      //console.log(DetailInfo);
     }).catch((err) => {
       wx.showToast({
         title: '加载商品详情失败',
