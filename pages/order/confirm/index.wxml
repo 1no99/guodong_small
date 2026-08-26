@@ -84,7 +84,7 @@
 
   <!-- 订单提交成功弹窗 -->
   <view class="order-success-modal" wx:if="{{showSuccessModal}}">
-    <view class="modal-mask" bindtap="closeSuccessModal"></view>
+    <view class="modal-mask"></view>
     <view class="modal-content">
       <view class="modal-icon">
         <t-icon name="check-circle-filled" size="120rpx" color="#07c160" />

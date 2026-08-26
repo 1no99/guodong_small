@@ -482,6 +482,45 @@ Component({
     // 阻止预览层穿透滚动
     preventMove() {},
 
+    // 长按保存图片
+    onPreviewLongPress(e) {
+      const url = e.currentTarget.dataset.url;
+      if (!url) return;
+      wx.showActionSheet({
+        itemList: ['保存图片'],
+        success(res) {
+          if (res.tapIndex === 0) {
+            wx.showLoading({ title: '保存中...' });
+            wx.downloadFile({
+              url,
+              success(downloadRes) {
+                if (downloadRes.statusCode === 200) {
+                  wx.saveImageToPhotosAlbum({
+                    filePath: downloadRes.tempFilePath,
+                    success() {
+                      wx.hideLoading();
+                      wx.showToast({ title: '保存成功', icon: 'success' });
+                    },
+                    fail() {
+                      wx.hideLoading();
+                      wx.showToast({ title: '保存失败', icon: 'none' });
+                    }
+                  });
+                } else {
+                  wx.hideLoading();
+                  wx.showToast({ title: '下载失败', icon: 'none' });
+                }
+              },
+              fail() {
+                wx.hideLoading();
+                wx.showToast({ title: '下载失败', icon: 'none' });
+              }
+            });
+          }
+        }
+      });
+    },
+
     specsConfirm() {
       const { isStock } = this.properties;
       if (!isStock) return;

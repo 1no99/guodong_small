@@ -275,6 +275,11 @@ Page({
         title: '商品信息错误',
         icon: 'none',
       });
+      setTimeout(() => {
+        wx.switchTab({
+          url: `/pages/category/index`,
+        });
+      }, 1000);
       return;
     }
 

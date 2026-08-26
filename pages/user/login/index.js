@@ -1,8 +1,7 @@
 import { wechatLogin, bindPhone } from '../../../services/auth/index';
-import { setUserInfo } from '../../../utils/auth';
+import { setUserInfo ,logout} from '../../../utils/auth';
 import { setToken } from '../../../utils/request';
 import Toast from 'tdesign-miniprogram/toast/index';
-
 Page({
   data: {
     loading: false,
@@ -43,10 +42,10 @@ Page({
     try {
       // 获取微信登录code
       const { code } = await wx.login();
-      //console.log('wx.login code:', code);
+      console.log('wx.login code:', code);
 
       const res = await wechatLogin(code);
-      //console.log('wechatLogin response:', JSON.stringify(res));
+      console.log('wechatLogin response:', res);
 
       if (res && res.code == 0) {
         const { token, user } = res.data || {};
@@ -186,24 +185,49 @@ Page({
 
   // 将头像临时文件转换为base64
   avatarToBase64(filePath) {
-    return new Promise((resolve, reject) => {
-      const fs = wx.getFileSystemManager();
-      fs.readFile({
-        filePath: filePath,
-        encoding: 'base64',
-        success: (res) => {
-          // 获取文件扩展名来确定MIME类型
-          const ext = filePath.split('.').pop().toLowerCase();
-          const mimeMap = { jpg: 'jpeg', jpeg: 'jpeg', png: 'png', gif: 'gif', webp: 'webp' };
-          const mime = mimeMap[ext] || 'png';
-          resolve(`data:image/${mime};base64,${res.data}`);
-        },
-        fail: (err) => {
-          console.error('读取头像文件失败', err);
-          reject(new Error('读取头像失败'));
-        },
+    const fs = wx.getFileSystemManager();
+
+    const readAsBase64 = (localPath) => {
+      return new Promise((resolve) => {
+        const ext = localPath.split('.').pop().toLowerCase();
+        const mimeMap = { jpg: 'jpeg', jpeg: 'jpeg', png: 'png', gif: 'gif', webp: 'webp' };
+        const mime = mimeMap[ext] || 'png';
+        fs.readFile({
+          filePath: localPath,
+          encoding: 'base64',
+          success: (res) => {
+            resolve(`data:image/${mime};base64,${res.data}`);
+          },
+          fail: () => {
+            resolve('/pages/user/login/1.png');
+          },
+        });
       });
-    });
+    };
+
+    // 如果是网络临时地址，先下载到本地
+    if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+      return new Promise((resolve) => {
+        wx.downloadFile({
+          url: filePath,
+          success: (res) => {
+            if (res.statusCode === 200) {
+              readAsBase64(res.tempFilePath).then(resolve);
+            } else {
+              console.error('下载头像失败，使用默认头像');
+              resolve('');
+            }
+          },
+          fail: (err) => {
+            console.error('下载头像失败，使用默认头像', err);
+            resolve('');
+          },
+        });
+      });
+    }
+
+    // 本地路径直接读取
+    return readAsBase64(filePath);
   },
 
   // 提交绑定手机号（同时提交头像和昵称）
@@ -240,6 +264,7 @@ Page({
       let finalAvatar = '';
       if (avatarUrl) {
         finalAvatar = await this.avatarToBase64(avatarUrl);
+        console.log(finalAvatar);
       }
 
       // 昵称存到username字段

@@ -33,7 +33,7 @@
       <view class="goods-card">
         <image class="goods-image" src="{{item.product_image}}" mode="aspectFill" />
         <view class="goods-info">
-          <view class="goods-title">{{item.product_name}}</view>
+          <view class="goods-title">{{item.product_name}} <text style="color: #4099ef;float: right;" bind:tap="downloadImage" data-url="{{item.product_image}}">下载</text> </view>
           <view class="goods-spec" wx:if="{{item.sku_name}}">规格：{{item.sku_name}}</view>
           <view class="goods-price-row">
             <view class="goods-price">¥{{item.price}}</view>
