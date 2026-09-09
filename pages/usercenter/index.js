@@ -167,7 +167,7 @@ getuserInfoFun(){
           }))
         : orderTagInfos;
       // 仅管理员手机号展示代客下单模块
-      const adminPhones = ['13355791935', '15760083770'];
+      const adminPhones = ['13355791935', '15760083770','15261177075'];
       const phone = wx.getStorageSync('userInfo')?.phone || '';
       const filteredMenuData = menuData.filter(group => {
         return !group.some(item => item.type === 'adminOder') || adminPhones.includes(phone);

@@ -39,7 +39,43 @@ export function wechatLogin(code) {
 }
 
 /**
- * 绑定手机号
+ * 通过微信授权手机号绑定（新版：传code由后端解密）
+ * @param {string} code - getPhoneNumber返回的code
+ * @param {string} username - 用户昵称
+ * @param {string} avatar - 头像base64
+ */
+export function bindPhoneByCode(code, username, avatar) {
+  if (config.useMock) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          code: 0,
+          message: '绑定成功',
+          data: {
+            token: 'mock_phone_token_' + Date.now(),
+            user: {
+              id: 1,
+              username: username || '微信用户',
+              nickname: username || '微信用户',
+              avatar: avatar || '',
+              phone: '13800138000',
+            },
+          },
+        });
+      }, 500);
+    });
+  }
+
+  return post('/user/bindPhone', { code, username, avatar }, true).then((data) => {
+    if (data.code === 0) {
+      return data;
+    }
+    throw new Error(data.message || '绑定手机号失败');
+  });
+}
+
+/**
+ * 绑定手机号（旧版：手动输入手机号）
  * @param {string} phone - 用户输入的手机号
  * @param {string} username - 用户昵称（存储到username字段）
  * @param {string} avatar - 头像base64

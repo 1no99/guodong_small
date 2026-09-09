@@ -1,17 +1,17 @@
-import { wechatLogin, bindPhone } from '../../../services/auth/index';
+import { wechatLogin, bindPhoneByCode } from '../../../services/auth/index';
 import { setUserInfo ,logout} from '../../../utils/auth';
 import { setToken } from '../../../utils/request';
 import Toast from 'tdesign-miniprogram/toast/index';
 Page({
   data: {
     loading: false,
-    redirectUrl: '', // 登录成功后跳转的地址
-    isLoggedIn: false, // 是否已微信登录
-    hasPhone: false, // 是否已绑定手机号
-    phoneNumber: '', // 用户输入的手机号
-    submitting: false, // 是否正在提交绑定
-    avatarUrl: '', // 获取的头像URL
-    nickname: '', // 微信昵称
+    redirectUrl: '',
+    isLoggedIn: false,
+    hasPhone: false,
+    submitting: false,
+    nickname: '',
+    avatarUrl: '',
+    currentStep: 1, // 1=昵称, 2=头像, 3=手机号
   },
 
   onLoad(options) {
@@ -121,24 +121,33 @@ Page({
       url: '/pages/home/home',
     });
   },
-  // 手机号输入
-  onPhoneInput(e) {
-    this.setData({
-      phoneNumber: e.detail.value,
-    });
-  },
-
-  // 获取头像（确认绑定按钮触发）
-  onGetAvatar(e) {
-    const { avatarUrl } = e.detail;
-    if (avatarUrl) {
-      this.setData({ avatarUrl });
-    }
-  },
 
   // 昵称输入
   onNicknameInput(e) {
     this.setData({ nickname: e.detail.value });
+  },
+
+  // 选择头像回调
+  onChooseAvatar(e) {
+    const { avatarUrl } = e.detail;
+    if (avatarUrl) {
+      this.setData({ avatarUrl, currentStep: 3 });
+    }
+  },
+
+  // 步骤1：确认昵称，进入下一步
+  onNextToAvatar() {
+    const { nickname } = this.data;
+    if (!nickname || !nickname.trim()) {
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '请输入昵称',
+        theme: 'warning',
+      });
+      return;
+    }
+    this.setData({ currentStep: 2 });
   },
 
   // 检查隐私授权状态
@@ -172,15 +181,64 @@ Page({
     });
   },
 
-  // 点击确认绑定 → 获取头像 → 提交全部数据
-  onGetAvatarAndSubmit(e) {
-    // 先获取头像
-    const { avatarUrl } = e.detail;
-    if (avatarUrl) {
-      this.setData({ avatarUrl });
+  // 授权手机号回调（步骤3）
+  async onGetPhoneNumber(e) {
+    if (e.detail.errMsg !== 'getPhoneNumber:ok') {
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '需要授权手机号才能完成注册',
+        theme: 'warning',
+      });
+      return;
     }
-    // 提交
-    this.onSubmitPhone();
+
+    const { nickname, avatarUrl } = this.data;
+
+    this.setData({ submitting: true });
+
+    try {
+      let finalAvatar = '';
+      if (avatarUrl) {
+        finalAvatar = await this.avatarToBase64(avatarUrl);
+      }
+
+      const finalUsername = nickname.trim();
+
+      // 调用绑定接口，传code由后端解密获取手机号
+      const res = await bindPhoneByCode(e.detail.code, finalUsername, finalAvatar);
+
+      if (res.code == 0) {
+        const { token, user } = res.data;
+        setToken(token);
+        setUserInfo(user);
+
+        this.setData({
+          submitting: false,
+          isLoggedIn: true,
+          hasPhone: true,
+        });
+
+        this.loginSuccess();
+      } else {
+        Toast({
+          context: this,
+          selector: '#t-toast',
+          message: res.message || '绑定手机号失败',
+          theme: 'error',
+        });
+        this.setData({ submitting: false });
+      }
+    } catch (err) {
+      console.error('绑定手机号失败', err);
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: err.message || '绑定失败，请重试',
+        theme: 'error',
+      });
+      this.setData({ submitting: false });
+    }
   },
 
   // 将头像临时文件转换为base64
@@ -228,82 +286,6 @@ Page({
 
     // 本地路径直接读取
     return readAsBase64(filePath);
-  },
-
-  // 提交绑定手机号（同时提交头像和昵称）
-  async onSubmitPhone() {
-    const { phoneNumber, avatarUrl, nickname } = this.data;
-
-    // 昵称必填校验
-    if (!nickname || !nickname.trim()) {
-      Toast({
-        context: this,
-        selector: '#t-toast',
-        message: '请输入昵称',
-        theme: 'warning',
-      });
-      return;
-    }
-
-    // 手机号必填校验
-    const phoneRegex = /^1[3-9]\d{9}$/;
-    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
-      Toast({
-        context: this,
-        selector: '#t-toast',
-        message: '请输入正确的手机号',
-        theme: 'warning',
-      });
-      return;
-    }
-
-    this.setData({ submitting: true });
-
-    try {
-      // 将头像转换为base64
-      let finalAvatar = '';
-      if (avatarUrl) {
-        finalAvatar = await this.avatarToBase64(avatarUrl);
-        console.log(finalAvatar);
-      }
-
-      // 昵称存到username字段
-      const finalUsername = nickname ? nickname.trim() : '';
-
-      // 调用绑定手机号接口，同时传递头像(base64)和昵称
-      const res = await bindPhone(phoneNumber, finalUsername, finalAvatar);
-
-      if (res.code == 0) {
-        const { token, user } = res.data;
-        setToken(token);
-        setUserInfo(user);
-
-        this.setData({
-          submitting: false,
-          isLoggedIn: true,
-          hasPhone: true,
-        });
-
-        this.loginSuccess();
-      } else {
-        Toast({
-          context: this,
-          selector: '#t-toast',
-          message: res.message || '绑定手机号失败',
-          theme: 'error',
-        });
-        this.setData({ submitting: false });
-      }
-    } catch (err) {
-      console.error('绑定手机号失败', err);
-      Toast({
-        context: this,
-        selector: '#t-toast',
-        message: err.message || '绑定失败，请重试',
-        theme: 'error',
-      });
-      this.setData({ submitting: false });
-    }
   },
 
   // 登录成功处理

@@ -24,44 +24,61 @@
       <text class="loading-text">登录中...</text>
     </view>
 
-    <!-- 绑定手机号 -->
+    <!-- 三步注册流程 -->
     <block wx:if="{{isLoggedIn && !hasPhone}}">
-      <text class="login-text">请输入手机号完成注册</text>
 
-      <!-- 昵称输入框 -->
-      <view class="phone-input-group">
-        <input
-          class="phone-input"
-          type="nickname"
-          placeholder="请输入昵称"
-          value="{{nickname}}"
-          bindinput="onNicknameInput"
-        />
-      </view>
+      <!-- 步骤1：输入昵称 -->
+      <block wx:if="{{currentStep === 1}}">
+        <text class="login-text">第1步：设置昵称</text>
+        <view class="phone-input-group">
+          <input
+            class="phone-input"
+            type="nickname"
+            placeholder="点击授权微信昵称"
+            value="{{nickname}}"
+            bindinput="onNicknameInput"
+          />
+        </view>
+        <button
+          class="login-btn wechat-btn"
+          bindtap="onNextToAvatar"
+        >
+          下一步
+        </button>
+      </block>
 
-      <!-- 手机号输入框 -->
-      <view class="phone-input-group">
-        <input
-          class="phone-input"
-          type="number"
-          maxlength="11"
-          placeholder="请输入手机号"
-          value="{{phoneNumber}}"
-          bindinput="onPhoneInput"
-        />
-      </view>
+      <!-- 步骤2：选择头像 -->
+      <block wx:if="{{currentStep === 2}}">
+        <text class="login-text">第2步：选择头像</text>
+        <image wx:if="{{avatarUrl}}" src="{{avatarUrl}}" mode="aspectFill" style="width:160rpx;height:160rpx;border-radius:50%;margin:20rpx auto;display:block;"></image>
+        <button
+          class="login-btn wechat-btn"
+          open-type="chooseAvatar"
+          bindchooseavatar="onChooseAvatar"
+        >
+          {{avatarUrl ? '重新选择头像' : '选择头像'}}
+        </button>
+      </block>
 
-      <!-- 确认绑定按钮 -->
+      <!-- 步骤3：授权手机号 -->
+      <block wx:if="{{currentStep === 3}}">
+        <text class="login-text">第3步：授权手机号</text>
+        <view style="text-align:center;margin:20rpx 0;">
+          <image wx:if="{{avatarUrl}}" src="{{avatarUrl}}" mode="aspectFill" style="width:120rpx;height:120rpx;border-radius:50%;"></image>
+          <view style="font-size:28rpx;margin-top:10rpx;">{{nickname}}</view>
+        </view>
+        <button
+          class="login-btn wechat-btn"
+          open-type="getPhoneNumber"
+          bindgetphonenumber="onGetPhoneNumber"
+          disabled="{{submitting}}"
+        >
+          {{submitting ? '注册中...' : '授权手机号并注册'}}
+        </button>
+      </block>
+
       <button
-        class="login-btn wechat-btn"
-        open-type="chooseAvatar"
-        bindchooseavatar="onGetAvatarAndSubmit"
-        disabled="{{phoneNumber.length !== 11 || submitting}}"
-      >
-        {{submitting ? '绑定中...' : '确认绑定'}}
-      </button>
-      <button
-      bindtap="gotopages"
+        bindtap="gotopages"
         style="background-color: #fff;width: 100%;margin-top: 10rpx;border: 1px solid #ccc;height: 45px;line-height: 45px;border-radius: 10rpx;"
       >
         返回主页
