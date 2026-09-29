@@ -55,15 +55,16 @@
       wx:if="{{!outOperateStatus}}"
     >
       <view class="sku-operate">
-        <view class="selected-sku-btn sku-operate-addCart {{!isStock ? 'disabled' : ''}}" bindtap="addCart">
+      
+        <view class="selected-sku-btn sku-operate-buyNow {{!isStock ? 'disabled' : ''}}" bindtap="addCart">
           加入购物车
         </view>
       </view>
-      <view class="sku-operate">
+      <!-- <view class="sku-operate">
         <view class="selected-sku-btn sku-operate-buyNow  {{!isStock ? 'disabled' : ''}}" bindtap="buyNow">
           立即购买
         </view>
-      </view>
+      </view> -->
     </view>
     <slot name="bottomSlot" />
   </view>

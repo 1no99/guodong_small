@@ -70,7 +70,7 @@
 
 .bar-separately,
 .bar-buy {
-  width: 254rpx;
+  width: 504rpx;
   height: 80rpx;
   color: #fff;
   display: flex;
@@ -86,7 +86,7 @@
 
 .bar-buy {
   background-color: #fa4126;
-  border-radius: 0rpx 40rpx 40rpx 0rpx;
+  border-radius:40rpx;
 }
 
 .flex {

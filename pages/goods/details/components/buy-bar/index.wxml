@@ -21,12 +21,12 @@
 	</view>
 	<block wx:if="{{buttonType === 1}}">
 		<view class="flex buy-buttons">
-			<view class="bar-separately" bindtap="toAddCart">
-				加入购物车
+			<view class="bar-buy" bindtap="toAddCart">
+				点击选购花色型号
 			</view>
-			<view class="bar-buy" bindtap="toBuyNow">
+			<!-- <view class="bar-buy" bindtap="toBuyNow">
 				立即购买
-			</view>
+			</view> -->
 		</view>
 	</block>
 	<block wx:if="{{isSlotButton}}">
