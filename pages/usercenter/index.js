@@ -146,7 +146,16 @@ getuserInfoFun(){
   },
 
   fetUseriInfoHandle() {
-    fetchUserCenter().then(({ userInfo, countsData, orderTagInfos: orderInfo, customerServiceInfo }) => {
+    const phone = wx.getStorageSync('userInfo')?.phone || '';
+    
+    // 先获取超级管理员列表，再获取用户信息
+    Promise.all([
+      fetchUserCenter(),
+      get('/user/superadmin/phones', {}, false).catch(() => ({ data: [] }))
+    ]).then(([userData, adminRes]) => {
+      const { userInfo, countsData, orderTagInfos: orderInfo, customerServiceInfo } = userData;
+      const adminPhones = adminRes?.data || [];
+      
       // 安全检查：确保 menuData[0] 存在
       if (menuData && menuData[0] && Array.isArray(menuData[0])) {
         menuData[0].forEach((v) => {
@@ -166,9 +175,7 @@ getuserInfoFun(){
             ...(orderInfo[index] || {}),
           }))
         : orderTagInfos;
-      // 仅管理员手机号展示代客下单模块
-      const adminPhones = ['13355791935', '15760083770','15261177075'];
-      const phone = wx.getStorageSync('userInfo')?.phone || '';
+      // 通过接口返回的管理员列表判断是否显示代客下单模块
       const filteredMenuData = menuData.filter(group => {
         return !group.some(item => item.type === 'adminOder') || adminPhones.includes(phone);
       });
