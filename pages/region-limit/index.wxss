@@ -1,0 +1,71 @@
+.region-limit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 80rpx;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.icon {
+  width: 140rpx;
+  height: 140rpx;
+  line-height: 140rpx;
+  text-align: center;
+  font-size: 60rpx;
+  font-weight: 600;
+  color: #ffffff;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffb15c, #ff7a45);
+  box-shadow: 0 12rpx 32rpx rgba(255, 122, 69, 0.3);
+}
+
+.title {
+  margin-top: 48rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.message {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  line-height: 44rpx;
+  color: #666666;
+  text-align: center;
+}
+
+.retry-btn {
+  width: 360rpx;
+  margin-top: 64rpx;
+  font-size: 30rpx;
+  color: #ffffff;
+  border-radius: 48rpx;
+  background-color: #ff5f15;
+}
+
+.retry-btn::after {
+  border: none;
+}
+
+.login-btn {
+  width: 360rpx;
+  margin-top: 24rpx;
+  font-size: 30rpx;
+  color: #ff5f15;
+  border-radius: 48rpx;
+  background-color: #ffffff;
+  border: 1px solid #ff5f15;
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.tips {
+  margin-top: 32rpx;
+  font-size: 24rpx;
+  color: #999999;
+}

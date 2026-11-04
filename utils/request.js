@@ -33,6 +33,25 @@ function clearToken() {
   }
 }
 
+// 地区受限时统一跳转提示页，避免多个并发请求重复跳转
+let regionLimitRedirectAt = 0;
+
+function handleRegionLimit(message) {
+  const now = Date.now();
+  if (now - regionLimitRedirectAt < 3000) return;
+
+  const pages = getCurrentPages();
+  const current = pages[pages.length - 1];
+  if (current && current.route === 'pages/region-limit/index') return;
+
+  regionLimitRedirectAt = now;
+  wx.reLaunch({
+    url: `/pages/region-limit/index?msg=${encodeURIComponent(
+      message || '当前地区暂未开放访问',
+    )}`,
+  });
+}
+
 /**
  * 封装wx.request
  * @param {string} url 请求地址
@@ -44,15 +63,12 @@ function request(url, options = {}) {
     method = 'GET',
     data = {},
     header = {},
-    needAuth = false,
   } = options;
 
-  // 添加认证token
-  if (needAuth) {
-    const token = getToken();
-    if (token) {
-      header['Authorization'] = `Bearer ${token}`;
-    }
+  // 有 token 就统一携带，便于后端识别 superadmin 用户（不受地区限制）
+  const token = getToken();
+  if (token) {
+    header['Authorization'] = `Bearer ${token}`;
   }
 
   // 设置默认header
@@ -66,6 +82,15 @@ function request(url, options = {}) {
       header,
       timeout: config.requestTimeout,
       success: (res) => {
+        const resData = res.data || {};
+
+        // 地区受限：后端返回 403 + code 3001
+        if (res.statusCode === 403 && resData.code === 3001) {
+          handleRegionLimit(resData.message);
+          reject(new Error(resData.message || '当前地区暂未开放访问'));
+          return;
+        }
+
         // 处理响应
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data);
@@ -84,7 +109,7 @@ function request(url, options = {}) {
           }, 1500);
           reject(new Error('未登录'));
         } else {
-          const errorMsg = res.data?.message || '请求失败';
+          const errorMsg = resData.message || '请求失败';
           wx.showToast({
             title: errorMsg,
             icon: 'none',

@@ -324,6 +324,25 @@ Page({
     const { redirectUrl } = this.data;
 
     if (redirectUrl) {
+      const target = redirectUrl.split('?')[0];
+      const tabBarPages = [
+        '/pages/home/home',
+        '/pages/category/index',
+        '/pages/cart/index',
+        '/pages/usercenter/index',
+      ];
+
+      // tabBar 页面只能用 switchTab 跳转
+      if (tabBarPages.includes(target)) {
+        wx.switchTab({
+          url: target,
+          fail: () => {
+            wx.navigateBack();
+          },
+        });
+        return;
+      }
+
       // 跳转到指定页面
       wx.redirectTo({
         url: redirectUrl,

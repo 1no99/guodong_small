@@ -1,0 +1,8 @@
+<view class="region-limit">
+  <view class="icon">限</view>
+  <view class="title">访问受限</view>
+  <view class="message">{{message}}</view>
+  <button class="retry-btn" bindtap="onRetry">重新尝试</button>
+  <button class="login-btn" bindtap="onLogin">去登录</button>
+  <view class="tips">如有疑问，请联系客服</view>
+</view>
