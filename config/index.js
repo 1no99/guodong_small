@@ -3,8 +3,8 @@ export const config = {
   useMock: false,
 
   /** API基础地址 */
-  apiBase: 'http://localhost:3200/api',
-  // apiBase: 'https://guodongyichu.fun/api',
+  // apiBase: 'http://localhost:3200/api',
+  apiBase: 'https://guodongyichu.fun/api',
 
   /** 请求超时时间 （毫秒） */
   requestTimeout: 30000,
